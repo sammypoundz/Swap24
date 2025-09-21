@@ -513,3 +513,157 @@ body {
   left: 10%;
 }
 
+
+.acct-container {
+  max-width: 360px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  /* background: #fff; */
+  border-radius: 16px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
+  position: relative;
+}
+
+.acct-close {
+    position: absolute;
+    top: -13px;
+    right: 38px;
+    font-size: 27px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.acct-progress {
+  margin: 20px 0;
+}
+
+.acct-progress-line {
+  height: 4px;
+  background: #eee;
+  border-radius: 2px;
+  position: relative;
+}
+
+.acct-progress-active {
+  height: 100%;
+  background: #001c70;
+  border-radius: 2px;
+}
+
+.acct-progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.acct-progress-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+}
+
+.acct-progress-dots span.active {
+  background: #001c70;
+}
+
+.acct-illustration {
+  margin: 20px 0;
+}
+
+.acct-illustration-box {
+  background: #f5f6fa;
+  border-radius: 12px;
+  padding: 20px;
+  display: inline-block;
+}
+
+.acct-lock {
+  font-size: 32px;
+}
+
+.acct-title {
+    font-size: 22px;
+    font-weight: 100;
+    margin: 16px 0;
+}
+
+.acct-steps {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.acct-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.acct-step-num {
+  background: #001c70;
+  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.acct-step.completed .acct-step-num {
+  background: #28a745;
+}
+
+.acct-step-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    color: #111111;
+}
+
+.acct-step-status {
+    font-size: 15px;
+    color: #433e3e;
+    margin: 2px 0 0;
+    font-weight: bold;
+}
+
+.acct-start-btn {
+  width: 100%;
+  padding: 12px;
+  background: #001c70;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.acct-start-btn:hover {
+  background: #0030a1;
+}
+
+.MyDflex{
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.w-50{
+  width: 50%;
+}
+
+.w-100{
+  width: 100% !important;
+}
+.sub-con{
+  font-size: 13px;
+  color: #707070;
+}

@@ -3,8 +3,8 @@ import SplashScreen from "./SplashScreen";
 import WelcomeScreen from "./WelcomeScreen";
 import OnboardingCarousel from "./OnboardingCarousel";
 import SignInScreen from "./SignInScreen";
-import SignUpScreen from "./Signup"; // 👈 make sure this file exists
-import TwoFA from "./twoFA"; // 👈 import your TFA page
+import AuthFlow from "./AuthFlow"; // 👈 use AuthFlow (Signup + AcctSetup flow)
+import TwoFA from "./twoFA"; // 👈 TFA page
 
 export default function App() {
   const [stage, setStage] = useState<
@@ -26,7 +26,7 @@ export default function App() {
 
       {stage === "onboarding" && (
         <OnboardingCarousel onFinish={() => setStage("signup")} />
-        // 👈 after onboarding, move to signup
+        // 👈 after onboarding → go to signup flow
       )}
 
       {stage === "signin" && (
@@ -38,13 +38,13 @@ export default function App() {
       )}
 
       {stage === "signup" && (
-        <SignUpScreen onClose={() => setStage("welcome")} />
+        <AuthFlow onClose={() => setStage("welcome")} /> 
+        // 👈 AuthFlow now handles SignupWizard + AcctSetup
       )}
 
       {stage === "tfa" && (
         <TwoFA
           onClose={() => setStage("signin")} // cancel → back to sign in
-          // onCreateAccount={() => setStage("signup")} // optional link to signup
         />
       )}
     </>

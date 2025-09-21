@@ -1,18 +1,18 @@
 import { useRef, useState, useEffect } from "react";
 import VerifyEmailImg from "./assets/VerifyEmail.svg";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2;
 
 interface SignupWizardProps {
-  onClose: () => void; // 👈 parent handles going back to Welcome
+  onClose: () => void;     
+  onVerified: () => void;  // 👈 parent switches to AcctSetup
 }
 
-const SignupWizard = ({ onClose }: SignupWizardProps) => {
+const SignupWizard = ({ onClose, onVerified }: SignupWizardProps) => {
   const [step, setStep] = useState<Step>(1);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Countdown timer (5 minutes = 300s)
   const [timeLeft, setTimeLeft] = useState(300);
 
   useEffect(() => {
@@ -20,7 +20,6 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
       const timer = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-
       return () => clearInterval(timer);
     }
   }, [step, timeLeft]);
@@ -32,7 +31,7 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
   };
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 2) {
       setStep((prev) => (prev + 1) as Step);
     }
   };
@@ -41,16 +40,15 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
     if (step > 1) {
       setStep((prev) => (prev - 1) as Step);
     } else {
-      onClose(); // 👈 if at step 1, exit to welcome
+      onClose();
     }
   };
 
-  // OTP logic
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     idx: number
   ) => {
-    const value = e.target.value.replace(/[^0-9]/g, ""); // only digits
+    const value = e.target.value.replace(/[^0-9]/g, "");
     e.target.value = value;
     if (value && idx < 3) {
       inputsRef.current[idx + 1]?.focus();
@@ -68,10 +66,7 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasteData = e.clipboardData
-      .getData("text")
-      .slice(0, 4)
-      .replace(/\D/g, "");
+    const pasteData = e.clipboardData.getData("text").slice(0, 4).replace(/\D/g, "");
     pasteData.split("").forEach((char, i) => {
       if (inputsRef.current[i]) {
         inputsRef.current[i]!.value = char;
@@ -82,23 +77,20 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
     }
   };
 
-  // Progress percentage
-  const progress = (step / 3) * 100;
+  const progress = (step / 2) * 100;
 
   return (
     <div className="signup-container">
-      {/* Close or Back button */}
       <button className="close-btn" onClick={handleBack}>
         {step === 1 ? "×" : "←"}
       </button>
 
       <div className="signUpInnerWrap">
-        {/* Progress Bar */}
         <div className="progress-wrapper">
           <div className="progress-bar" style={{ width: `${progress}%` }} />
         </div>
 
-        {/* STEP 1: Create Account */}
+        {/* STEP 1 */}
         {step === 1 && (
           <div className="signup-step">
             <h2 className="signup-title">Create your account</h2>
@@ -111,11 +103,7 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
               <input type="text" placeholder="Mark" className="input" />
 
               <label className="label">Email</label>
-              <input
-                type="email"
-                placeholder="forexample@gmail.com"
-                className="input"
-              />
+              <input type="email" placeholder="forexample@gmail.com" className="input" />
 
               <label className="label">Password</label>
               <div className="password-field">
@@ -140,7 +128,7 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
           </div>
         )}
 
-        {/* STEP 2: Verify Email (OTP) */}
+        {/* STEP 2: Verify Email */}
         {step === 2 && (
           <div className="verify-step">
             <h2 className="signup-title">Verify your email</h2>
@@ -170,11 +158,7 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
             </div>
 
             <div className="parent-container">
-              <button
-                className="btn primary"
-                onClick={handleNext}
-                disabled={timeLeft <= 0}
-              >
+              <button className="btn primary" onClick={onVerified} disabled={timeLeft <= 0}>
                 Verify
               </button>
             </div>
@@ -183,14 +167,6 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
                 Resend OTP
               </button>
             </div>
-          </div>
-        )}
-
-        {/* STEP 3: Finish */}
-        {step === 3 && (
-          <div className="signup-step">
-            <h2 className="signup-title">Step 3: Finish</h2>
-            <p>🎉 Account setup complete!</p>
           </div>
         )}
       </div>
