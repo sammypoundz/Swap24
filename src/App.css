@@ -1,0 +1,519 @@
+*{
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+
+.main-app{
+
+}
+.splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #10178c; /* same blue as screenshot */
+}
+
+.splash-logo {
+  width: 150px;
+  animation: heartbeat 5s ease-in-out infinite;
+}
+
+/* Heartbeat animation */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.2);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.2);
+  }
+  70% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Welcome Screen */
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #10178c; /* blue */
+  color: white;
+}
+
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.welcome-logo {
+  width: 150px;
+  margin-bottom: 60px;
+}
+
+
+.btnWrap{
+  position: relative;
+  top: 60%;
+  width: 100%;
+  text-align: center;
+}
+/* Button */
+.welcome-btn {
+  width: 90%;
+  max-width: 300px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: #10178c;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.welcome-btn:hover {
+  background: #ddd;
+}
+
+/* Sign in */
+.welcome-signin {
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+.onboarding {
+  font-family: 'Lato', sans-serif;
+}
+
+.onboarding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  background: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.onboarding-img {
+    width: 325px;
+    margin: 40px 0;
+    margin-top: -45px;
+}
+
+.first-img {
+  width: 180px; /* make bigger (or smaller if you prefer) */
+}
+
+.progress {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.dot {
+  width: 100px;
+  height: 4px;
+  background: #eee;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: #10178c;
+}
+
+.onboarding h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 15px 0 10px;
+  color: #000;;
+}
+
+.onboarding p {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.onboarding-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #10178c;
+  color: white;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  padding: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.onboarding-btn:hover {
+  background: #0d126d;
+}
+
+.SlideContWrap{
+    position: relative;
+    top: -13%;
+    text-align: left;
+}
+
+.SlidetextWrap{
+    width: 86%;
+    margin: 0px auto;
+}
+
+.signin-container {
+  max-width: 360px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 40px;
+  cursor: pointer !important;
+  position: absolute;
+  left: 14px;
+  top: -26px;
+}
+
+.signin-title {
+  margin-top: 15px;
+  font-size: 19px;
+  font-weight: 100;
+  margin-bottom: 35px;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #181717;
+  font-weight: 200 !important;
+}
+
+.input {
+    padding: 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 26px;
+    font-size: 16px;
+    width: 100%;
+
+}
+
+.password-field {
+  position: relative;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: -24px;
+  top: 15px;
+  cursor: pointer !important;
+  font-size: 23px;
+  font-weight: 200;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 20px;
+    padding: 10px;
+    /* margin-top: 15px; */
+    width: 100%;
+}
+
+.links a {
+  color: #0014a8;
+  text-decoration: none;
+}
+
+.signin-btn {
+    background: #0014a8;
+    color: white;
+    border: none;
+    padding: 20px;
+    font-size: 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    width: 322px;
+    text-align: center;
+}
+
+.signInInnerWrap{
+  width: 90%;
+}
+
+.signUpInnerWrap{
+  width: 90%;
+}
+
+.VerifyEmailInnerWrap{
+  width: 90%;
+}
+
+.signup-container {
+  max-width: 380px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+
+
+/* Progress Bar */
+.progress-wrapper {
+  width: 322px;
+  height: 4px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #0014a8;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.signup-title {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+
+
+.password-field {
+  position: relative;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.verify-btn,
+.next-btn {
+  background: #0014a8;
+  color: white;
+  border: none;
+  padding: 20px;
+  font-size: 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  width: 322px;
+  text-align: center;
+}
+
+.success-msg {
+  font-size: 13px;
+  color: green;
+  margin: 6px 0 14px 0;
+}
+
+.verify-container {
+  max-width: 380px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  position: relative;
+}
+
+
+
+/* Progress Bar */
+.progress-wrapper {
+  width: 100%;
+  height: 4px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #0014a8;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Illustration placeholder */
+.illustration {
+  margin: 30px 0 20px 0;
+}
+
+.illustration img {
+    max-width: 90%;
+    height: auto
+}
+
+.verify-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.verify-text {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: 0.2s ease;
+  padding: 20px;
+  font-size: 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  width: 322px;
+  text-align: center;
+}
+
+.btn.primary {
+  background: #0014a8;
+  color: #fff;
+  border: none;
+}
+
+.btn.secondary {
+  background: #fff;
+  color: #0014a8;
+  border: 1px solid #ccc;
+}
+
+.verify-step{
+  position: fixed;
+  left: 10%;
+}
+
+.parent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    left: -5%;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.otp-input {
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.otp-input:focus {
+  border-color: #0014a8;
+}
+
+.countDown{
+  color: rgb(204, 16, 16) !important;
+}
+
+
+.input {
+  /* width: 100%;
+  padding: 12px;
+  font-size: 16px; */
+  border: 2px solid #ccc;
+  border-radius: 7px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus state */
+.input:focus {
+  border-color: #0014a8; /* Your blue */
+  box-shadow: 0 0 5px rgba(0, 20, 168, 0.5);
+}
+
+.lSty{
+  font-size: 17px;
+  margin-bottom: 20px;
+}
+
+.mb{
+  margin-bottom: 20px;
+}
+
+
+.btnWrap2{
+  position: absolute;
+  top: 405px;
+  left: 10%;
+}
+
