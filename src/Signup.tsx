@@ -148,7 +148,8 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
               <img src={VerifyEmailImg} alt="Verify Email" />
             </div>
             <p className="verify-text">
-               Enter the 4-digit OTP sent to your email - <span className="countDown">{formatTime(timeLeft)}</span>
+              Enter the 4-digit OTP sent to your email -{" "}
+              <span className="countDown">{formatTime(timeLeft)}</span>
             </p>
 
             <div className="otp-inputs">
@@ -158,7 +159,9 @@ const SignupWizard = ({ onClose }: SignupWizardProps) => {
                   type="text"
                   maxLength={1}
                   className="otp-input"
-                  ref={(el) => (inputsRef.current[i] = el)}
+                  ref={(el) => {
+                    inputsRef.current[i] = el;
+                  }}
                   onChange={(e) => handleChange(e, i)}
                   onKeyDown={(e) => handleKeyDown(e, i)}
                   onPaste={handlePaste}
