@@ -9,8 +9,8 @@ interface Slide {
   text: string;
 }
 
-interface OnboardingCarouselProps {
-  onFinish: () => void; // 👈 prop to move to signup
+interface OnboardingProps {
+  onFinish: () => void;
 }
 
 const slides: Slide[] = [
@@ -31,14 +31,14 @@ const slides: Slide[] = [
   },
 ];
 
-export default function OnboardingCarousel({ onFinish }: OnboardingCarouselProps) {
+export default function OnboardingCarousel({ onFinish }: OnboardingProps) {
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => {
     if (current < slides.length - 1) {
       setCurrent(current + 1);
     } else {
-      onFinish(); // 👈 call parent to go to signup
+      onFinish(); // 👈 callback to App.tsx
     }
   };
 

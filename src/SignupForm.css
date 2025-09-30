@@ -1,0 +1,194 @@
+/* Container */
+.signup-container {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 28px 20px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  position: relative;
+}
+
+/* Top area so we can place the cancel icon */
+.signup-top {
+  height: 36px; /* keeps space at top */
+  position: relative;
+}
+
+/* Cancel icon (top-left) */
+.cancel-icon {
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 40px !important;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+}
+
+/* Progress indicator */
+.signup-progress {
+    display: flex;
+    gap: 6px;
+    margin: 6px auto 18px;
+    justify-content: center;
+    position: relative;
+    top: -28px;
+}
+
+.signup-progress .dot {
+  width: 60px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e5e5e5;
+}
+
+.signup-progress .dot.active {
+  background: #131E91;
+}
+
+/* Title */
+.signup-title {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 6px 0 18px;
+    text-align: left;
+}
+
+/* Form */
+.signup-form label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.signup-form input {
+    width: 100%;
+    padding: 18px 14px;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    margin-top: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.signup-form input:focus {
+  border-color: #131E91;
+  box-shadow: 0 0 0 3px rgba(29, 62, 232, 0.06);
+}
+
+/* Password field */
+.password-field {
+  position: relative;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+/* leave space on the right for the toggle button */
+.password-wrapper input {
+  padding-right: 70px;
+}
+
+/* Toggle button inside the input area */
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* small success text */
+.success-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #0a7f2f;
+}
+
+/* terms text */
+.signup-terms {
+  font-size: 13px;
+  color: #555;
+  margin: 16px 0;
+}
+
+.signup-terms a {
+  font-weight: 600;
+  color: #111;
+  text-decoration: none;
+}
+
+/* submit */
+.signup-btn {
+  width: 100%;
+  background: #131E91;
+  color: white;
+  padding: 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+
+
+  margin-top: 6px;
+}
+
+/* small responsive tweak */
+@media (max-width: 420px) {
+  .signup-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.password-rules {
+  margin-top: 8px;
+  padding-left: 16px;
+  font-size: 0.85rem;
+  list-style: none;
+}
+
+.password-rules li {
+  margin: 4px 0;
+  transition: color 0.3s ease;
+}
+
+.password-rules li.invalid {
+  color: #d9534f; /* red */
+}
+
+.password-rules li.valid {
+  color: #28a745; /* green */
+  font-weight: 500;
+}
+
+.field-error {
+  color: red;
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.input-error {
+  border: 1px solid red !important;
+  background-color: #ffeaea;
+}
+
+.error-message{
+    color: red;
+}

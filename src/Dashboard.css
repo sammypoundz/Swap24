@@ -1,0 +1,341 @@
+.dashboard-container {
+  /* font-family: Arial, sans-serif; */
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.username {
+  font-size: 16px;
+  margin: 0;
+}
+
+.wallet {
+  font-size: 12px;
+  color: gray;
+}
+
+.icon.bell {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Banner Carousel */
+.banner-carousel {
+  position: relative;
+  overflow: hidden;
+  padding-left: 10px; /* ensures first card shows a peek of next */
+  margin: 10px 0;
+}
+
+.banner-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.banner-track::-webkit-scrollbar {
+  display: none; /* hide scrollbar for clean look */
+}
+
+.banner {
+  flex: 0 0 85%; /* only 85% width so next one peeks */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+}
+
+/* overlay for readability */
+.banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:#131E91; /* dark overlay */
+  /* background: rgba(3, 4, 83, 0.4); dark overlay */
+  border-radius: 12px;
+}
+
+.banner p,
+.banner button {
+   position: relative;
+    z-index: 1;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 7px 0px;
+}
+
+.buy-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* subtle border */
+  background: rgba(255, 255, 255, 0.1);       /* transparent glass */
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);                /* glass blur effect */
+  -webkit-backdrop-filter: blur(10px);        /* Safari support */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);  /* soft shadow */
+  transition: all 0.3s ease;
+}
+
+.buy-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.buy-btn:active {
+  transform: translateY(1px);
+}
+
+
+/* Carousel Arrows */
+.carousel-controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.arrow-btn {
+    border-radius: 100%;
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 23px;
+    color: #333;
+    border: 1px solid #8b7f7f;
+    background: none;
+    margin-bottom: 2px;
+    margin-top: -8px;
+}
+
+/* Transactions */
+.transactions {
+    flex: 1;
+    padding: 16px;
+    margin-bottom: 33px;
+}
+
+.transaction-list {
+  display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 40vh;
+    overflow: scroll;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: -2px;
+    border-bottom: 1px solid #ccc;
+    padding: 7px;
+}
+
+.tx-icon {
+     font-size: 22px;
+    background: #dae2e9;
+    padding: 5px;
+    border-radius: 100%;
+    display: flex;
+}
+
+.tx-details {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.tx-type {
+  margin: 0;
+  font-weight: 100;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.tx-date {
+  margin: 0;
+  font-size: 12px;
+  color: gray;
+}
+
+.tx-amount {
+  text-align: right;
+  font-size: 14px;
+}
+
+.tx-amount span {
+  display: block;
+  font-size: 12px;
+  color: gray;
+}
+
+.tx-amount.positive {
+  color: green;
+}
+
+.tx-amount.negative {
+  color: red;
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  background: white;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -50px; /* 👈 still visible (nav height - peek height) */
+  transition: bottom 0.3s ease-in-out;
+  z-index: 999;
+  height: 70px; /* 👈 define height */
+}
+
+/* When opened, slide fully up */
+.bottom-nav.open {
+  bottom: 0;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  color: gray;
+  cursor: pointer;
+}
+
+.nav-item svg {
+  font-size: 20px;
+}
+
+.nav-item.active {
+    color: #131E91;
+    border-top: 2px solid;
+}
+
+.contentFlex{
+    display: flex;
+    width: 81%;
+    position: relative;
+    left: -26px;
+    align-items: center;
+}
+
+.content1{
+    width: 90%;
+}
+
+.content2{
+    width: 10%;
+    display: grid;
+}
+
+.illuImg1{
+    width: 109px;
+    margin: -21px -6px;
+    position: relative;
+    top: -13px;
+    left: -12px;
+}
+
+
+.illuImg2{
+    width: 139px;
+    position: relative;
+    left: -82px;
+    margin: -41px 0px;
+}
+
+.transactions h4{
+    font-weight: 100;
+    font-size: 20px;
+    margin-bottom: 0px;
+}
+
+.customIcon{
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+}
+
+.nav-item span{
+  font-weight: bold;
+}
+
+.btnCOnt{
+  position: relative;
+    top: 3px;
+    font-size: 20px;
+}
+
+.bgImg{
+   position: absolute;
+    width: 448px;
+    height: 100%;
+    top: 0;
+    left: -51px;
+    object-fit: none;
+    /* z-index: -1; */
+    border-radius: 12px;
+}

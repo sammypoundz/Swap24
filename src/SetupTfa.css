@@ -1,0 +1,90 @@
+.secure-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  height: 100vh;
+  justify-content: space-between;
+  font-family: Arial, sans-serif;
+  background: #fff;
+}
+
+/* Text */
+.secure-text-section {
+  margin-top: 40px;
+  text-align: justify;
+}
+
+.secure-text-section h2 {
+  font-size: 25px;
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+
+.secure-text-section p {
+  font-size: 17px;
+  color: #555;
+}
+
+/* Form */
+.secure-form {
+  margin-top: 24px;
+  position: relative;
+  top: -206px; /* your offset kept */
+}
+
+.secure-labels {
+  display: flex;
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: #0c0b0b;
+  gap: 28px;
+}
+
+.secure-input-row {
+  display: flex;
+  border: 1px solid #ccc; /* neutral border */
+  border-radius: 4px;
+  overflow: hidden;
+  width: 326px;
+  transition: border-color 0.2s ease;
+}
+
+/* Highlight row when child input/select focused */
+.secure-input-row:focus-within {
+  border-color: #1a237e;
+}
+
+.secure-country-select {
+  border: none;
+  padding: 16px;
+  font-size: 17px;
+  background: #fff;
+  border-right: 1px solid #ccc;
+  outline: none;
+}
+
+.secure-phone-input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 17px;
+  outline: none;
+}
+
+/* Button */
+.secure-continue-btn {
+  width: 100%;
+  padding: 20px;
+  font-size: 16px;
+  background: #1a237e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.secure-continue-btn:hover {
+  background: #0d175c;
+}

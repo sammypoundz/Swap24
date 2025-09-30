@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import logo from "./assets/logo.svg";
 
-interface SplashScreenProps {
+interface SplashProps {
   onFinish: () => void;
 }
 
-export default function SplashScreen({ onFinish }: SplashScreenProps) {
+export default function SplashScreen({ onFinish }: SplashProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      onFinish();
-    }, 3000); // 3 seconds
+      onFinish(); // 👈 use callback from props
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onFinish]);

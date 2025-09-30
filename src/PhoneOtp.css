@@ -1,0 +1,115 @@
+.phone-otp-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh; /* full screen height */
+  padding: 24px;
+  /* font-family: Arial, sans-serif; */
+  background: #fff;
+  position: relative;
+  margin-top: -33px;
+}
+
+.phone-otp-close {
+      position: absolute;
+    top: 48px;
+    left: 24px;
+    border: none;
+    background: none;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.phone-otp-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.phone-otp-step {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+}
+
+.phone-otp-step.phone-otp-completed {
+  background: #4a4ae6;
+}
+
+.phone-otp-step.phone-otp-active {
+  background: #4a4ae6;
+}
+
+.phone-otp-body {
+  flex: 1;
+  margin-top: 40px;
+}
+
+.phone-otp-title {
+  font-size: 25px;
+    font-weight: 300;
+    margin-bottom: 11px;
+    color: #111111;
+}
+
+.phone-otp-subtitle {
+  font-size: 17px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.phone-otp-label {
+  display: block;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 6px;
+    color: #131E91;
+}
+
+.phone-otp-input {
+ width: 91%;
+    padding: 16px;
+    font-size: 21px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.phone-otp-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.phone-otp-button {
+    width: 100%;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    position: relative;
+    top: 273px;
+}
+
+.phone-otp-button:hover {
+  background: #0d1549;
+}
+
+.phone-otp-resend {
+  background: none;
+  border: none;
+  color: #1a237e;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.phone-otp-message{
+    padding: 10px;
+    color: green;
+}

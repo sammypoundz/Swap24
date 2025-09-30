@@ -1,0 +1,135 @@
+.steps-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-btn {
+   font-size: 2.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    left: -5px; 
+}
+
+.progress-wrapper {
+  flex-grow: 1;
+  height: 4px;
+  background: #eee;
+  border-radius: 2px;
+  margin-left: 1rem;
+}
+
+.progress-bar {
+  height: 4px;
+  background: #0a2e87;
+  border-radius: 2px;
+}
+
+.illustration img {
+  width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  margin: 2rem 0;
+}
+
+.steps-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.steps-list {
+  margin-bottom: 2rem;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 0;
+}
+
+.step-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.step-item.completed .step-icon {
+  background: #0a2e87;
+  color: #fff;
+}
+
+.step-item.active .step-icon {
+  background: #0a2e87;
+  color: #fff;
+}
+
+.step-item.pending .step-icon {
+  background: #eee;
+  color: #666;
+}
+
+.step-text {
+  flex: 1;
+  text-align: left;
+  margin-left: 0.8rem;
+}
+
+.step-title {
+  font-weight: 500;
+  display: block;
+}
+
+.step-subtitle {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.step-meta {
+  font-size: 0.9rem;
+}
+
+.completed-text {
+  color: #0a2e87;
+  font-weight: 600;
+}
+
+.step-time {
+  color: #555;
+}
+
+.next-btn {
+  width: 100%;
+  padding: 20px;
+  background: #0a2e87;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.skip-btn {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 0.95rem;
+  cursor: pointer;
+}

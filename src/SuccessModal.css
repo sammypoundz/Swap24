@@ -1,0 +1,79 @@
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.modal-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 265px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  animation: popIn 0.3s ease-out;
+}
+
+/* Icon */
+.icon-wrap {
+  margin-bottom: 1rem;
+}
+
+/* Title */
+.modal-title {
+  color: #0A2E87;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Text */
+.modal-text {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+/* Button */
+.continue-btn {
+  width: 100%;
+  padding: 12px;
+  background: #0A2E87;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.continue-btn:hover {
+  background: #08256e;
+}
+
+/* Animation */
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.illustration2 {
+ margin: -12px 0 20px 0;
+ margin-bottom: 25px;
+}
