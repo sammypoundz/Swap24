@@ -105,7 +105,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  border-radius: 12px;
+  border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.3); /* subtle border */
   background: rgba(255, 255, 255, 0.1);       /* transparent glass */
   color: #fff;
@@ -175,7 +175,8 @@
      font-size: 22px;
     background: #dae2e9;
     padding: 5px;
-    border-radius: 100%;
+    border-radius: 8px;
+    /* border-radius: 100%; */
     display: flex;
 }
 
@@ -301,10 +302,11 @@
 
 
 .illuImg2{
-    width: 139px;
+    width: 122px;
     position: relative;
     left: -82px;
-    margin: -41px 0px;
+    margin: -40px 0px;
+    top: -6px;
 }
 
 .transactions h4{

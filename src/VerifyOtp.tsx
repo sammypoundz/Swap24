@@ -10,7 +10,7 @@ export default function VerifyOtp() {
   const email = location.state?.email || "forexample@gmail.com";
 
   const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
-  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]); // ✅ cleaner typing
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -137,7 +137,9 @@ export default function VerifyOtp() {
               type="text"
               maxLength={1}
               value={digit}
-              ref={(el) => (inputRefs.current[idx] = el)}
+              ref={(el) => {
+                inputRefs.current[idx] = el; // ✅ no return, fixes TS error
+              }}
               onChange={(e) => handleChange(e.target.value, idx)}
               onKeyDown={(e) => handleKeyDown(e, idx)}
               onPaste={handlePaste}

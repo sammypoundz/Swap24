@@ -1,4 +1,3 @@
-// App.tsx
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,6 +16,8 @@ import SetupTfa from "./SetupTfa";
 import PhoneOtp from "./PhoneOtp";
 import AcctCreationSuccess from "./AcctCreationSuccess";
 import Dashboard from "./dashboard";
+import SignIn from "./SignIn";
+import PhoneTfa from "./PhoneTfa";
 
 // 🔹 RainbowKit Wallet Setup
 const { connectors } = getDefaultWallets({
@@ -48,7 +49,7 @@ function WelcomeWrapper() {
   return (
     <WelcomeScreen
       onGetStarted={() => navigate("/onboarding")}
-      onSignIn={() => navigate("/signup")}
+      onSignIn={() => navigate("/signin")}
     />
   );
 }
@@ -62,20 +63,23 @@ export default function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider chains={[mainnet, sepolia]}>
+        {/* ❌ Remove chains prop here */}
+        <RainbowKitProvider>
           <Router>
             <Routes>
               <Route path="/" element={<SplashWrapper />} />
               <Route path="/welcome" element={<WelcomeWrapper />} />
               <Route path="/onboarding" element={<OnboardingWrapper />} />
               <Route path="/signup" element={<SignupForm />} />
+              <Route path="/signin" element={<SignIn />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/secure-account-steps" element={<SecureAccount />} />
               <Route path="/start-tfa" element={<StartTfa />} />
               <Route path="/setup-tfa" element={<SetupTfa />} />
               <Route path="/phone-otp" element={<PhoneOtp />} />
               <Route path="/acct-creation-success" element={<AcctCreationSuccess />} />
-              <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ Wallet-enabled Dashboard */}
+              <Route path="/phone-tfa" element={<PhoneTfa />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </Router>
         </RainbowKitProvider>

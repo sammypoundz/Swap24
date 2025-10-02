@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import { FaBell, FaChevronLeft, FaChevronRight, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -10,8 +11,7 @@ import EmptyState from "./EmptyState";
 import illCoin1 from "./assets/vecteezy_flat-vector-illustration-of-gold-icon-suitable-for-design_6607020 1.svg";
 import illCoin2 from "./assets/vecteezy_coin-vector-icon-design_21225566 1.svg";
 import btcBg from "./assets/Lines.svg";
-import ethBg from "./assets/Lines.svg";
-import ltcBg from "./assets/Lines.svg";
+
 import BTC from "./assets/BTC - Bitcoin.svg";
 import ETH from "./assets/ETC - Binance-Peg Ethereum Classic.svg";
 import homeIcon from "./assets/Home_light (1).svg";
@@ -26,7 +26,8 @@ const Dashboard: React.FC = () => {
 
   const trackRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
-
+  const navigate = useNavigate(); // ✅ initialize navigate
+ 
   const scrollPrev = () => {
     if (trackRef.current) {
       trackRef.current.scrollBy({
@@ -46,7 +47,15 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
+
+    if (!authToken || !userId) {
+      console.warn("⚠️ No auth token or userId found, redirecting to sign-in");
+      navigate("/signin"); // ✅ redirect if not found
+      return;
+    }
+
     if (!userId) {
       console.warn("⚠️ No userId found in localStorage");
       setLoading(false);

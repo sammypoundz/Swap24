@@ -39,7 +39,13 @@ export interface RegisterResponse {
   profileId: string;
 }
 
-export interface SigninResponse {
+export interface SigninInitResponse {
+  message: string;
+  step: string; // e.g. "VERIFY_OTP"
+  phone: string; // 👈 backend sends this, so include it
+}
+
+export interface SigninVerifyResponse {
   message: string;
   token: string;
   userId: string;
@@ -76,14 +82,18 @@ export const verifyPhoneOtp = (data: { email: string; phone: string; otp: string
 export const resendPhoneOtp = (data: { email: string; phone: string }) =>
   API.post("/auth/resend-otp-phone", data);
 
-// SIGNIN
+// SIGNIN (Step 1 → triggers OTP)
 export const signinUser = (data: { email: string; password: string }) =>
-  API.post<SigninResponse>("/auth/signin", data);
+  API.post<SigninInitResponse>("/auth/signin", data);
+
+// VERIFY LOGIN OTP (Step 2 → finalize login)
+export const loginVerifyOtp = (data: { email: string; otp: string }) =>
+  API.post<SigninVerifyResponse>("/auth/login-verify-otp", data);
 
 // LOGOUT
 export const logoutUser = () => API.post("/auth/logout");
 
-/* ========== NEW ROUTES ========== */
+/* ========== USER & TRANSACTIONS ========== */
 
 // GET USER PROFILE
 export const getUserProfile = (userId: string) =>
@@ -93,7 +103,7 @@ export const getUserProfile = (userId: string) =>
 export const getUserTransactions = (userId: string) =>
   API.get<{ transactions: Transaction[] }>(`/transactions/${userId}`);
 
-// ADD NEW TRANSACTION (✅ now supports description)
+// ADD NEW TRANSACTION (✅ supports description)
 export const addUserTransaction = (data: {
   userId: string;
   type: string;
@@ -102,8 +112,9 @@ export const addUserTransaction = (data: {
   valueInNaira?: number;
   status?: "pending" | "completed" | "failed";
   txHash?: string;
-  transactionDescription?: string; // 👈 added
-}) => API.post<{ message: string; transaction: Transaction }>(
-  "/transactions/add",
-  data
-);
+  transactionDescription?: string;
+}) =>
+  API.post<{ message: string; transaction: Transaction }>(
+    "/transactions/add",
+    data
+  );
