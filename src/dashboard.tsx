@@ -50,11 +50,11 @@ const Dashboard: React.FC = () => {
     const authToken = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
 
-    if (!authToken || !userId) {
-      console.warn("⚠️ No auth token or userId found, redirecting to sign-in");
-      navigate("/signin"); // ✅ redirect if not found
-      return;
-    }
+    // if (!authToken || !userId) {
+    //   console.warn("⚠️ No auth token or userId found, redirecting to sign-in");
+    //   navigate("/signin"); // ✅ redirect if not found
+    //   return;
+    // }
 
     if (!userId) {
       console.warn("⚠️ No userId found in localStorage");

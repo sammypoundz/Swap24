@@ -1,9 +1,12 @@
 // src/api.ts
 import axios from "axios";
 
-// ✅ Use Vite env variable (falls back to localhost for dev)
+// ✅ Dynamically choose base URL depending on environment
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000/api" // local backend
+      : import.meta.env.VITE_API_BASE_URL, // production (Render)
   withCredentials: true, // 👈 include if you’ll use cookies/sessions later
 });
 
