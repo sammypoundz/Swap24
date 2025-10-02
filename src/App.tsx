@@ -22,8 +22,7 @@ import PhoneTfa from "./PhoneTfa";
 // 🔹 RainbowKit Wallet Setup
 const { connectors } = getDefaultWallets({
   appName: "Swap24",
-  projectId: "YOUR_PROJECT_ID", // 👉 replace with your WalletConnect Cloud Project ID
-  chains: [mainnet, sepolia],
+  projectId: "bfc1d429ce7b8141774763ac158210fb", 
 });
 
 // 🔹 Wagmi Config
@@ -63,7 +62,7 @@ export default function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {/* ❌ Remove chains prop here */}
+        {/* ✅ Don't pass `chains` anymore, RainbowKit gets them from config */}
         <RainbowKitProvider>
           <Router>
             <Routes>
