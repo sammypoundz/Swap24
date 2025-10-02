@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import { FaBell, FaChevronLeft, FaChevronRight, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
 
   const trackRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
-  const navigate = useNavigate(); // ✅ initialize navigate
+  // const navigate = useNavigate(); // ✅ initialize navigate
  
   const scrollPrev = () => {
     if (trackRef.current) {
