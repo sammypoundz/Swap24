@@ -1,8 +1,10 @@
 // src/api.ts
 import axios from "axios";
 
+// ✅ Use Vite env variable (falls back to localhost for dev)
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // 👈 update if backend hosted elsewhere
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  withCredentials: true, // 👈 include if you’ll use cookies/sessions later
 });
 
 /* ========== TYPES ========== */
@@ -15,7 +17,7 @@ export interface Transaction {
   status: "pending" | "completed" | "failed";
   txHash?: string;
   date: string;
-  transactionDescription?: string; // 👈 added here
+  transactionDescription?: string;
 }
 
 export interface UserProfile {
@@ -27,7 +29,7 @@ export interface UserProfile {
   walletAddress?: string | null;
   balance: {
     naira: number;
-    crypto: Record<string, number>; // 👈 flexible for BTC, ETH, LTC, etc.
+    crypto: Record<string, number>; // flexible for BTC, ETH, etc.
   };
   transactions: Transaction[];
 }
@@ -42,7 +44,7 @@ export interface RegisterResponse {
 export interface SigninInitResponse {
   message: string;
   step: string; // e.g. "VERIFY_OTP"
-  phone: string; // 👈 backend sends this, so include it
+  phone: string;
 }
 
 export interface SigninVerifyResponse {
@@ -103,7 +105,7 @@ export const getUserProfile = (userId: string) =>
 export const getUserTransactions = (userId: string) =>
   API.get<{ transactions: Transaction[] }>(`/transactions/${userId}`);
 
-// ADD NEW TRANSACTION (✅ supports description)
+// ADD NEW TRANSACTION
 export const addUserTransaction = (data: {
   userId: string;
   type: string;
