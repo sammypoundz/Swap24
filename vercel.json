@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
+
+
+git add .
+
+
+git commit -m "fix: added vercel.json for routing"
+
+git push origin main
