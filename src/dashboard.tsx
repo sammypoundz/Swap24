@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    // const authToken = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
 
     // if (!authToken || !userId) {
