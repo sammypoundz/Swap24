@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  verifyPhoneOtp,
-  resendPhoneOtp,
-} from "./api";
+import { verifyPhoneOtp, resendPhoneOtp } from "./api";
 import "./PhoneOtp.css";
 
 interface LocationState {
@@ -19,7 +16,7 @@ const PhoneOtp: React.FC = () => {
   const location = useLocation();
   const state = location.state as LocationState;
 
-  const email = state?.email; // You must pass email when navigating
+  const email = state?.email;
   const phone = state?.phone;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +31,13 @@ const PhoneOtp: React.FC = () => {
 
     try {
       const res = await verifyPhoneOtp({ email, phone, otp });
-      setMessage((res.data as any).message || "OTP verified successfully!");
+      const data = res.data as any; // Adjust type if using TypeScript interfaces
+
+      // ✅ Store userId and token in localStorage
+      if (data.userId) localStorage.setItem("userId", data.userId);
+      if (data.token) localStorage.setItem("authToken", data.token);
+
+      setMessage(data.message || "OTP verified successfully!");
 
       // Navigate to account creation success
       navigate("/acct-creation-success");
@@ -76,7 +79,6 @@ const PhoneOtp: React.FC = () => {
         &times;
       </button>
 
-      {/* Progress bar */}
       <div className="phone-otp-progress">
         <span className="phone-otp-step phone-otp-completed" />
         <span className="phone-otp-step phone-otp-active" />
