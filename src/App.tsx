@@ -82,7 +82,7 @@ export default function App() {
               <Route path="/phone-tfa" element={<PhoneTfa />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/market" element={<Market/>} />
-              <Route path="/buyAsset" element={<BuyAsset/>} />
+              <Route path="/buy-asset" element={<BuyAsset/>} />
             </Routes>
           </Router>
         </RainbowKitProvider>

@@ -12,12 +12,14 @@ interface Offer {
   id: number;
   name: string;
   positiveRate: string;
-  price: number;
+  tokenAmount: number;
   change: string;
   rate: string;
   limit: string;
   paymentMethod: string;
   offererImg: string;
+  CryptoToken: string;
+  totalPrice: string;
 }
 
 const offers: Offer[] = [
@@ -25,34 +27,40 @@ const offers: Offer[] = [
     id: 1,
     name: "Leslie Alexander",
     positiveRate: "83% positive",
-    price: 162077734.26,
+    tokenAmount: 0.16207834,
     change: "0%",
-    rate: "1 NGN = 1.00 NGN of BTC",
-    limit: "order limit 15,947 - 41,854 NGN",
+    rate: "1 NGN = 0.00001 of BTC",
+    limit: "order limit 0.947 - 0.903854 BTC",
     paymentMethod: "Bank Transfer",
     offererImg: avatarImg,
+    CryptoToken: "BTC",
+    totalPrice: "₦1,000,000",
   },
   {
     id: 2,
     name: "Leslie Alexander",
     positiveRate: "83% positive",
-    price: 162077734.26,
+    tokenAmount: 162077734.26,
     change: "1%",
-    rate: "1 NGN = 1.00 NGN of BTC",
-    limit: "order limit 15,947 - 41,854 NGN",
+    rate: "1 NGN = 1.00  of ETH",
+    limit: "order limit 15,947 - 41,854 ETH",
     paymentMethod: "Bank Transfer",
     offererImg: avatarImg,
+    CryptoToken: "ETH",
+    totalPrice: "₦1,000,000",
   },
   {
     id: 3,
     name: "Leslie Alexander",
     positiveRate: "83% positive",
-    price: 162077734.26,
+    tokenAmount: 162077734.26,
     change: "1%",
-    rate: "1 NGN = 1.00 NGN of BTC",
-    limit: "order limit 15,947 - 41,854 NGN",
+    rate: "1 NGN = 0.01 of BTC",
+    limit: "order limit 0.23344 - 0.5677789 BTC",
     paymentMethod: "Bank Transfer",
     offererImg: avatarImg,
+    CryptoToken: "USDT",
+    totalPrice: "₦1,000,000",
   },
 ];
 
@@ -107,7 +115,7 @@ const Market: React.FC = () => {
         </div>
 
         <div className="succ-market-assets">
-          {["BTC", "ETH", "USDT", "BNB", "ADA", "ADA"].map((asset) => (
+          {["BTC", "ETH", "USDT", "BNB", "ADA"].map((asset) => (
             <button
               key={asset}
               className={`succ-asset-btn ${
@@ -138,14 +146,17 @@ const Market: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="succ-offer-price">
+                <div className="succ-offer-tokenAmount">
                   <h2>
-                    ₦
-                    {offer.price.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
+                    <span className="crypto-prefix">{offer.CryptoToken}</span>
+                    &nbsp;
+                    {Number(offer.tokenAmount).toLocaleString(undefined, {
+                      minimumFractionDigits:
+                        offer.tokenAmount % 1 === 0 ? 0 : 2,
+                      maximumFractionDigits: offer.tokenAmount < 1 ? 8 : 2, // show more decimals if less than 1 (for crypto)
                     })}
                   </h2>
+
                   <span className="succ-offer-change">{offer.change}</span>
                 </div>
 
@@ -155,7 +166,16 @@ const Market: React.FC = () => {
                 <p className="succ-offer-method">{offer.paymentMethod}</p>
               </div>
 
-              <button className="succ-buy-btn">Buy</button>
+              <button
+                className="succ-buy-btn"
+                onClick={() =>
+                  navigate("/buy-asset", {
+                    state: { offer, asset: selectedAsset },
+                  })
+                }
+              >
+                Buy
+              </button>
             </div>
           ))}
         </div>

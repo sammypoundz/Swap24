@@ -277,3 +277,34 @@
     font-size: 14px;
     
 }
+
+.succ-convert-field {
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: #6B7280;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px 0;
+  border-bottom: 1px solid #dcdcdc;
+  transition: all 0.2s ease-in-out;
+}
+
+.succ-convert-field:focus {
+  border-bottom: 1px solid #131E91;
+  color: #111;
+}
+
+.succ-convert-field::placeholder {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.succ-error {
+  color: #d93025;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 4px;
+}

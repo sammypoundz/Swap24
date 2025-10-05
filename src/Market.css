@@ -238,3 +238,14 @@
     align-items: center;
     gap: 10px;
 }
+
+.crypto-prefix{
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.succ-offer-tokenAmount{
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
