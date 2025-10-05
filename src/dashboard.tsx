@@ -11,13 +11,13 @@ import EmptyState from "./EmptyState";
 import illCoin1 from "./assets/vecteezy_flat-vector-illustration-of-gold-icon-suitable-for-design_6607020 1.svg";
 import illCoin2 from "./assets/vecteezy_coin-vector-icon-design_21225566 1.svg";
 import btcBg from "./assets/Lines.svg";
+import BottomNav from "./BottomNav";
 
 import BTC from "./assets/BTC - Bitcoin.svg";
 import ETH from "./assets/ETC - Binance-Peg Ethereum Classic.svg";
-import homeIcon from "./assets/Home_light (1).svg";
-import tradeIcon from "./assets/Spot v4.svg";
-import marketIcon from "./assets/market.svg";
-import profileIcon from "./assets/User_fill.svg";
+
+
+
 
 const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -214,7 +214,7 @@ const Dashboard: React.FC = () => {
       </section>
 
       {/* Bottom Navigation */}
-      <nav className={`bottom-nav ${navOpen ? "open" : ""}`}>
+      {/* <nav className={`bottom-nav ${navOpen ? "open" : ""}`}>
         <button className="toggle-btn" onClick={() => setNavOpen(!navOpen)}>
           {navOpen ? <FaChevronDown /> : <FaChevronUp />}
         </button>
@@ -235,7 +235,8 @@ const Dashboard: React.FC = () => {
           <img src={profileIcon} className="customIcon" />
           <span>Profile</span>
         </div>
-      </nav>
+      </nav> */}
+       <BottomNav />
     </div>
   );
 };

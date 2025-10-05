@@ -1,0 +1,279 @@
+.succ-buyasset {
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Lato', sans-serif;
+  padding: 16px;
+}
+
+.succ-buyasset-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 98px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.succ-buyasset-back {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.succ-buyasset-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+}
+
+.succ-asset-seller {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  align-items: flex-start;
+}
+
+.succ-asset-seller-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.succ-asset-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.succ-asset-seller-info h3 {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.succ-asset-seller-info p {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+}
+
+.succ-seller-rate {
+  color: #0056ff;
+  display: flex;
+}
+
+.succ-seller-time {
+  text-align: right;
+  font-size: 12px;
+}
+
+.succ-seller-time strong {
+  display: block;
+  font-size: 14px;
+  color: #111;
+}
+
+.succ-seller-time span {
+  color: #666;
+
+}
+
+.succ-asset-price {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: -20px;
+}
+
+.succ-asset-price .spa{
+    font-weight: 900;
+    color: #111111e3;
+}
+
+.succ-asset-price h3 {
+    color: #131E91;
+    font-size: 15px;
+    font-weight: 300;
+}
+
+.succ-asset-price p {
+  font-size: 13px;
+  color: #666;
+}
+
+.succ-convert-box {
+  margin-top: 20px;
+  /* border: 1px solid #eee; */
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.succ-convert-row {
+    /* background: #fafafa; */
+    background: #F9FAFB;
+    border-radius: 10px;
+    padding: 6px 14px;
+    margin-bottom: -26px;
+    border: 1px solid #ccc; 
+}
+
+.succ-convert-item h4 {
+  font-size: 16px;
+  color: #111;
+}
+
+.succ-convert-item p {
+  font-size: 12px;
+  color: #666;
+}
+
+.succ-convert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #333;
+}
+
+.succ-pay-btn,
+.succ-receive-btn {
+    background: #E5E7EB;
+    color: #171A1F;
+    font-size: 12px;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 10px;
+}
+
+.succ-convert-input{
+    margin-top: 10px;
+    text-align: center;
+    line-height: 7px;
+    margin-bottom: 22px;
+}
+
+.succ-convert-input h4{
+    font-size: 17px;
+    font-weight: 600;
+    color: #6B7280;
+}
+
+.succ-convert-input span{
+    font-size: 12px;
+    color: #171A1F !important;
+}
+
+.succ-convert-swap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    padding: 10px;
+    /* box-shadow: inset 1px 1px 8px 8px #f1f1f1; */
+    margin: -15px auto;
+    z-index: 1;
+    position: relative;
+    top: 12px;
+    border: 2px solid #ccc;
+    border-left-color: white;
+    border-right-color: white;
+}
+
+.swap-inner{
+    background: #131E91;
+    border-radius: 100%;
+    padding: 10px 10px;
+    display: flex;
+}
+
+.nairaWrap{
+    background: #131E91;
+    padding: 6px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+}
+
+.nairaWrap-dflex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.succ-convert-swap img {
+  width: 28px;
+  height: 28px;
+}
+
+.succ-payment-method {
+ background: #F9FAFB;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 30px auto;
+    border: 1px solid #ccc;
+    width: 80%;
+    margin-bottom: 0px;
+}
+
+.suc-buy-btn {
+  background: #131E91;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  width: 100%;
+  margin-top: 24px;
+  cursor: pointer;
+}
+
+.succ-buy-btn:hover {
+  background: #002bcc;
+}
+
+.coinWrap{
+    background: #ccc;
+    padding: 3px;
+    display: flex;
+    border-radius: 100%;
+}
+
+.coinWrap-dflex{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.succ-convert-item h4{
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.price-dflex{
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    flex-flow: column;
+    
+}
+
+.price-dflex strong{
+    color: #111;
+    font-size: 14px;
+    
+}

@@ -18,6 +18,8 @@ import AcctCreationSuccess from "./AcctCreationSuccess";
 import Dashboard from "./dashboard";
 import SignIn from "./SignIn";
 import PhoneTfa from "./PhoneTfa";
+import Market from "./Market";
+import BuyAsset from "./buyAsset";
 
 // 🔹 RainbowKit Wallet Setup
 const { connectors } = getDefaultWallets({
@@ -79,6 +81,8 @@ export default function App() {
               <Route path="/acct-creation-success" element={<AcctCreationSuccess />} />
               <Route path="/phone-tfa" element={<PhoneTfa />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/market" element={<Market/>} />
+              <Route path="/buyAsset" element={<BuyAsset/>} />
             </Routes>
           </Router>
         </RainbowKitProvider>

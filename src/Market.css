@@ -1,0 +1,240 @@
+.succ-market {
+  /* font-family: "Inter", sans-serif; */
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.markettitle{
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 1rem;
+}
+
+.succ-market-title {
+ font-size: medium;
+    font-weight: 700;
+    display: flex;
+    /* align-items: center; */
+    gap: 0.5rem;
+}   
+
+.succ-market-header {
+  padding: 1rem;
+}
+
+.succ-market-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    background: #F3F4F6;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.succ-market-icon {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    left: 13px;
+    top: 2px; 
+}
+
+.succ-market-search {
+     flex: 1;
+    padding: 0.6rem;
+    border: 1px solid #F3F4F6;
+    border-radius: 8px;
+    outline: none;
+    background: #F3F4F6;
+}
+
+.succ-market-tabs {
+   display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    border: 2px solid #A0A4AE;
+    /* padding: 2px; */
+    border-radius: 8px;
+}
+
+.succ-tab {
+  flex: 1;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #F3F4F6;
+}
+
+.succ-tab.active {
+  background: #131E91;
+  color: #fff;
+  border-color: #131E91;
+}
+
+.succ-market-assets {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+    overflow-x: scroll;
+    gap:5px;
+    width: 336px;
+}
+
+.Market-backbtn{
+    background: none;
+    border: none;
+}
+
+.succ-asset-btn {
+    background: #f3f4f6;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6B7280;
+}
+
+.succ-asset-btn.active {
+    background: #E1E7FF;
+    color: #131E91;
+}
+
+.succ-market-body {
+  flex: 1;
+  padding: 1rem;
+}
+
+.succ-market-subtitle {
+    font-size: 1rem;
+    font-weight: 100;
+    margin-bottom: 1rem;
+}
+
+.succ-offer-card {
+     background: #fff;
+    /* border: 1px solid #eee; */
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04); */
+    border-bottom: 2px solid #eee;
+}
+
+.succ-offer-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.succ-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #002bff;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+}
+
+.succ-name {
+  font-weight: 600;
+}
+
+.succ-rate {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.succ-offer-price h2 {
+  font-size: 1rem;
+  margin: 0.4rem 0;
+}
+
+.succ-offer-change {
+  color: red;
+  font-size: 0.8rem;
+}
+
+.succ-offer-desc,
+.succ-offer-limit,
+.succ-offer-method {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 7px;
+}
+
+.succ-offer-method{
+    border-left: 1px solid red;
+    padding-left: 10px;
+}
+
+.succ-buy-btn {
+  background: #131E91;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  align-self: center;
+  font-weight: 500;
+}
+
+.succ-market-footer {
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.succ-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.8rem 0;
+}
+
+.succ-nav button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #555;
+  cursor: pointer;
+}
+
+.succ-nav button.active,
+.succ-nav button:focus {
+  color: #002bff;
+}
+
+
+.market-inner-wrap{
+    max-width: 600px;
+    /* margin: 0 auto; */
+    /* padding: 1rem; */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow-y: scroll;
+    height: 47vh;
+}
+
+.succ-offer-price{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
