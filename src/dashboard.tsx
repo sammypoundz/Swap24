@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
-import { FaBell, FaChevronLeft, FaChevronRight, FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { FaBell, FaChevronLeft, FaChevronRight} from "react-icons/fa";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { getUserTransactions } from "./api";
 import type { Transaction } from "./api";
@@ -22,7 +22,7 @@ import ETH from "./assets/ETC - Binance-Peg Ethereum Classic.svg";
 const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [navOpen, setNavOpen] = useState(false); // 👈 toggle state for nav
+  // const [navOpen, setNavOpen] = useState(false); // 👈 toggle state for nav
 
   const trackRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
