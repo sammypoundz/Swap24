@@ -46,11 +46,11 @@ const BuyAsset: React.FC = () => {
   }, [offer, navigate]);
 
   // --- Extract limits like "500 - 10000"
-  const extractLimits = (limitStr = ""): [number, number] => {
-    const match = limitStr.match(/([\d.]+)\s*-\s*([\d.]+)/);
-    return match ? [parseFloat(match[1]), parseFloat(match[2])] : [0, 0];
-  };
-  const [minLimit, maxLimit] = extractLimits(offer?.limit);
+  // const extractLimits = (limitStr = ""): [number, number] => {
+  //   const match = limitStr.match(/([\d.]+)\s*-\s*([\d.]+)/);
+  //   return match ? [parseFloat(match[1]), parseFloat(match[2])] : [0, 0];
+  // };
+  // const [minLimit, maxLimit] = extractLimits(offer?.limit);
 
   // ✅ Extract rate (supports both directions)
   const extractRate = (rateStr = ""): number => {
