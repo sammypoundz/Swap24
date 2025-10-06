@@ -29,7 +29,7 @@ const offers: Offer[] = [
     positiveRate: "83% positive",
     tokenAmount: 0.16207834,
     change: "0%",
-    rate: "1 NGN = 0.00001 of BTC",
+    rate: "1 NGN = 0.00031 of BTC",
     limit: "order limit 0.947 - 0.903854 BTC",
     paymentMethod: "Bank Transfer",
     offererImg: avatarImg,

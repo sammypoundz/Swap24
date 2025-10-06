@@ -19,7 +19,7 @@ interface Offer {
   totalPrice: string;
 }
 
-// ✅ Utility to format amount (money or token)
+// ✅ Utility to format money or token
 const formatAmount = (value: number, isMoney = false): string => {
   if (isNaN(value)) return "0";
   return isMoney
@@ -41,21 +41,18 @@ const BuyAsset: React.FC = () => {
   const offer = state.offer;
   const asset = state.asset || "TOKEN";
 
-  // ✅ Redirect if no offer data
   useEffect(() => {
     if (!offer) navigate("/market");
   }, [offer, navigate]);
 
-  // --- Parse limits like "500 - 10000"
+  // --- Extract limits like "500 - 10000"
   const extractLimits = (limitStr = ""): [number, number] => {
     const match = limitStr.match(/([\d.]+)\s*-\s*([\d.]+)/);
     return match ? [parseFloat(match[1]), parseFloat(match[2])] : [0, 0];
   };
   const [minLimit, maxLimit] = extractLimits(offer?.limit);
 
-  // ✅ Parse rate dynamically — supports both formats:
-  // 1️⃣ "1 NGN = 0.00001 of BTC"
-  // 2️⃣ "1 BTC = 45000000 NGN"
+  // ✅ Extract rate (supports both directions)
   const extractRate = (rateStr = ""): number => {
     if (!rateStr) return 0;
 
@@ -65,7 +62,8 @@ const BuyAsset: React.FC = () => {
       const tokenPerNaira = parseFloat(ngnToToken[1]);
       if (tokenPerNaira > 0) {
         const ngnPerToken = 1 / tokenPerNaira;
-        console.log("🔁 Interpreted: 1 NGN = X Token → Converted to NGN/token:", ngnPerToken);
+        console.log("💱 Rate parsed:", rateStr);
+        console.log(`👉 1 Token = ${ngnPerToken} NGN`);
         return ngnPerToken;
       }
     }
@@ -74,7 +72,8 @@ const BuyAsset: React.FC = () => {
     const tokenToNgn = rateStr.match(/1\s*\w+\s*=\s*([\d.]+)\s*NGN/i);
     if (tokenToNgn) {
       const ngnValue = parseFloat(tokenToNgn[1]);
-      console.log("🔁 Interpreted: 1 Token = X NGN → Using directly:", ngnValue);
+      console.log("💱 Rate parsed:", rateStr);
+      console.log(`👉 1 Token = ${ngnValue} NGN`);
       return ngnValue;
     }
 
@@ -85,20 +84,29 @@ const BuyAsset: React.FC = () => {
   const nairaPerToken = extractRate(offer?.rate || "");
 
   console.log("🔍 Parsed rate from backend:", offer?.rate);
-  console.log("💰 Computed nairaPerToken (NGN per 1 token):", nairaPerToken);
+  console.log("💰 Computed NGN per token:", nairaPerToken);
 
   // --- States ---
   const [tokenInput, setTokenInput] = useState<string>("");
   const [nairaAmount, setNairaAmount] = useState<number>(0);
   const [error, setError] = useState<string>("");
 
-  // ✅ When token input changes, update NGN value in real time
+  // ✅ Compute conversion on input
   useEffect(() => {
-    if (!offer) return;
+    console.group("💡 Conversion Debug");
+    console.log("🔢 Token input:", tokenInput);
+    console.log("💹 NGN per Token:", nairaPerToken);
+
+    if (!offer) {
+      console.warn("⚠️ No offer found — exiting");
+      console.groupEnd();
+      return;
+    }
 
     if (tokenInput === "") {
       setNairaAmount(0);
       setError("");
+      console.groupEnd();
       return;
     }
 
@@ -106,33 +114,33 @@ const BuyAsset: React.FC = () => {
     if (isNaN(tokenAmount)) {
       setError("Invalid number");
       setNairaAmount(0);
+      console.groupEnd();
       return;
     }
 
-    // Ensure token amount is within limit (if applicable)
-    if (minLimit && maxLimit) {
-      if (tokenAmount < minLimit || tokenAmount > maxLimit) {
-        setError(`Amount must be between ${minLimit} and ${maxLimit} ${asset}`);
-        setNairaAmount(0);
-        return;
-      }
+    if (nairaPerToken <= 0) {
+      setError("Unable to compute conversion — invalid rate");
+      setNairaAmount(0);
+      console.groupEnd();
+      return;
     }
 
-    // ✅ Calculate naira amount based on rate
-    setError("");
+    // ✅ Convert Token → NGN
     const converted = tokenAmount * nairaPerToken;
     setNairaAmount(converted);
+    setError("");
 
-    // 🔎 Debug log for conversion
-    console.log(
-      `🧮 Token: ${tokenAmount} ${asset} × Rate: ${nairaPerToken} NGN/token = ${converted} NGN`
-    );
-  }, [tokenInput, nairaPerToken, minLimit, maxLimit, asset, offer]);
+    // ✅ Log the result in console
+    console.log(`🧮 ${tokenAmount} ${asset} × ${nairaPerToken} = ${converted} NGN`);
+    console.log("✅ Naira amount:", converted);
+    console.groupEnd();
+  }, [tokenInput, nairaPerToken, offer, asset]);
 
   const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    // Prevent invalid formats like "00." or "-"
-    if (/^\d*\.?\d*$/.test(input)) setTokenInput(input);
+    if (/^\d*\.?\d*$/.test(input)) {
+      setTokenInput(input);
+    }
   };
 
   const handleBack = () => navigate("/market");
