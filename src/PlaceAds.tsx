@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { formatUnits, parseUnits } from "viem";
+// import { formatUnits, parseUnits } from "viem";
 import ERC20_ABI from "./abi/ERC20.json";
 import TokenSelectModal from "./TokenSelectModal";
 
