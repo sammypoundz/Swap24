@@ -20,11 +20,12 @@ import SignIn from "./SignIn";
 import PhoneTfa from "./PhoneTfa";
 import Market from "./Market";
 import BuyAsset from "./buyAsset";
+import PlaceAds from "./PlaceAds"; // ✅ New Import
 
 // 🔹 RainbowKit Wallet Setup
 const { connectors } = getDefaultWallets({
   appName: "Swap24",
-  projectId: "bfc1d429ce7b8141774763ac158210fb", 
+  projectId: "bfc1d429ce7b8141774763ac158210fb",
 });
 
 // 🔹 Wagmi Config
@@ -64,7 +65,6 @@ export default function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {/* ✅ Don't pass `chains` anymore, RainbowKit gets them from config */}
         <RainbowKitProvider>
           <Router>
             <Routes>
@@ -81,8 +81,11 @@ export default function App() {
               <Route path="/acct-creation-success" element={<AcctCreationSuccess />} />
               <Route path="/phone-tfa" element={<PhoneTfa />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/market" element={<Market/>} />
-              <Route path="/buy-asset" element={<BuyAsset/>} />
+              <Route path="/market" element={<Market />} />
+              <Route path="/buy-asset" element={<BuyAsset />} />
+              
+              {/* ✅ New Route for Place Ads */}
+              <Route path="/place-ads" element={<PlaceAds />} />
             </Routes>
           </Router>
         </RainbowKitProvider>

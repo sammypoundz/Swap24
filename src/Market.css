@@ -7,107 +7,132 @@
   justify-content: space-between;
 }
 
-.markettitle{
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    margin-bottom: 1rem;
+.markettitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .succ-market-title {
- font-size: medium;
-    font-weight: 700;
-    display: flex;
-    /* align-items: center; */
-    gap: 0.5rem;
-}   
+  font-size: medium;
+  font-weight: 700;
+  display: flex;
+  gap: 0.5rem;
+}
 
 .succ-market-header {
   padding: 1rem;
 }
 
 .succ-market-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    background: #F3F4F6;
-    padding: 8px;
-    border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  padding: 8px;
+  border-radius: 6px;
 }
 
 .succ-market-icon {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    position: relative;
-    left: 13px;
-    top: 2px; 
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: relative;
+  left: 13px;
+  top: 2px;
 }
 
 .succ-market-search {
-     flex: 1;
-    padding: 0.6rem;
-    border: 1px solid #F3F4F6;
-    border-radius: 8px;
-    outline: none;
-    background: #F3F4F6;
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  outline: none;
+  background: #f3f4f6;
 }
 
+/* === Updated BUY/SELL Tabs === */
 .succ-market-tabs {
-   display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    border: 2px solid #A0A4AE;
-    /* padding: 2px; */
-    border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  border: 2px solid #a0a4ae;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f9f9f9;
 }
 
 .succ-tab {
   flex: 1;
-  padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-weight: 500;
+  padding: 0.8rem 1rem;
+  border: none;
+  font-weight: 600;
   cursor: pointer;
-  background: #F3F4F6;
+  font-size: 0.95rem;
+  text-align: center;
+  background: #f3f4f6;
+  color: #555;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.succ-tab.active {
-  background: #131E91;
-  color: #fff;
-  border-color: #131E91;
+.succ-tab:hover {
+  background: #e5e7ff;
+  color: #131e91;
 }
+
+/* Active state styled like a button */
+.succ-tab.active {
+  background: linear-gradient(135deg, #131e91, #2a3aff);
+  color: #fff;
+  border: none;
+  box-shadow: 0 3px 8px rgba(19, 30, 145, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Subtle glow animation when switching tabs */
+.succ-tab.active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(19, 30, 145, 0.4);
+  z-index: -1;
+}
+
+/* === Rest of your CSS === */
 
 .succ-market-assets {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1rem;
-    overflow-x: scroll;
-    gap:5px;
-    width: 336px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+  overflow-x: scroll;
+  gap: 5px;
+  width: 336px;
 }
 
-.Market-backbtn{
-    background: none;
-    border: none;
+.Market-backbtn {
+  background: none;
+  border: none;
 }
 
 .succ-asset-btn {
-    background: #f3f4f6;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    color: #6B7280;
+  background: #f3f4f6;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
 }
 
 .succ-asset-btn.active {
-    background: #E1E7FF;
-    color: #131E91;
+  background: #e1e7ff;
+  color: #131e91;
 }
 
 .succ-market-body {
@@ -116,22 +141,20 @@
 }
 
 .succ-market-subtitle {
-    font-size: 1rem;
-    font-weight: 100;
-    margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 100;
+  margin-bottom: 1rem;
 }
 
 .succ-offer-card {
-     background: #fff;
-    /* border: 1px solid #eee; */
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04); */
-    border-bottom: 2px solid #eee;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #eee;
 }
 
 .succ-offer-user {
@@ -174,25 +197,65 @@
 .succ-offer-desc,
 .succ-offer-limit,
 .succ-offer-method {
-    font-size: 0.85rem;
-    color: #555;
-    margin-bottom: 7px;
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 7px;
 }
 
-.succ-offer-method{
-    border-left: 1px solid red;
-    padding-left: 10px;
+.succ-offer-method {
+  border-left: 1px solid red;
+  padding-left: 10px;
 }
 
-.succ-buy-btn {
-  background: #131E91;
-  color: #fff;
+/* === Buy & Sell Buttons (cards) === */
+
+.succ-buy-btn,
+.succ-sell-btn {
   border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1.2rem;
+  border-radius: 10px;
+  padding: 0.6rem 1.4rem;
   cursor: pointer;
-  align-self: center;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+}
+
+/* BUY button */
+.succ-buy-btn {
+  background: linear-gradient(135deg, #131e91, #2a3aff);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(19, 30, 145, 0.25);
+}
+
+.succ-buy-btn:hover {
+  background: linear-gradient(135deg, #0e1780, #2130e0);
+  transform: translateY(-2px);
+}
+
+.succ-buy-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 1px 4px rgba(19, 30, 145, 0.3);
+}
+
+/* SELL button */
+.succ-sell-btn {
+  background: linear-gradient(135deg, #f33a3a, #ff6b6b);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(243, 58, 58, 0.25);
+}
+
+.succ-sell-btn:hover {
+  background: linear-gradient(135deg, #d92e2e, #ff4f4f);
+  transform: translateY(-2px);
+}
+
+.succ-sell-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 1px 4px rgba(243, 58, 58, 0.3);
 }
 
 .succ-market-footer {
@@ -222,29 +285,26 @@
   color: #002bff;
 }
 
-
-.market-inner-wrap{
-    max-width: 600px;
-    /* margin: 0 auto; */
-    /* padding: 1rem; */
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    overflow-y: scroll;
-    height: 47vh;
+.market-inner-wrap {
+  max-width: 600px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow-y: scroll;
+  height: 47vh;
 }
 
-.succ-offer-price{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.succ-offer-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.crypto-prefix{
-    font-size: 0.8rem;
-    color: #777;
+.crypto-prefix {
+  font-size: 0.8rem;
+  color: #777;
 }
 
-.succ-offer-tokenAmount{
+.succ-offer-tokenAmount {
   display: flex;
   align-items: center;
   gap: 0.2rem;

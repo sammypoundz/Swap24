@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Market.css";
 import { useNavigate } from "react-router-dom";
+import { useAccount } from "wagmi";
+import { createPublicClient, http } from "viem";
+import { sepolia } from "viem/chains";
 
 import backBtn from "./assets/backbtn.svg";
 import searchIcon from "./assets/searchicon.svg";
@@ -8,69 +11,90 @@ import bellIcon from "./assets/bell-02.svg";
 import avatarImg from "./assets/avatarimg.svg";
 import BottomNav from "./BottomNav";
 
+import swap24Abi from "./contracts/Swap24MarketABI.json"; // ✅ ABI file
+
+// ✅ Create a public client using your Alchemy Sepolia RPC
+const client = createPublicClient({
+  chain: sepolia,
+  transport: http("https://eth-sepolia.g.alchemy.com/v2/kXzHzmRhXZwsatZnwtLik"),
+});
+
+// ✅ Your deployed contract address
+const CONTRACT_ADDRESS = "0x7b66522d365e4c906b89d2263d37c2c306264f89";
+
 interface Offer {
   id: number;
-  name: string;
-  positiveRate: string;
-  tokenAmount: number;
-  change: string;
-  rate: string;
-  limit: string;
+  vendor: string;
+  cryptoToken: string;
+  tokenAmount: string;
+  priceInNaira: string;
   paymentMethod: string;
-  offererImg: string;
-  CryptoToken: string;
-  totalPrice: string;
+  rate: string;
+  isActive: boolean;
 }
-
-const offers: Offer[] = [
-  {
-    id: 1,
-    name: "Leslie Alexander",
-    positiveRate: "83% positive",
-    tokenAmount: 0.16207834,
-    change: "0%",
-    rate: "1 NGN = 0.00031 of BTC",
-    limit: "order limit 0.947 - 0.903854 BTC",
-    paymentMethod: "Bank Transfer",
-    offererImg: avatarImg,
-    CryptoToken: "BTC",
-    totalPrice: "₦1,000,000",
-  },
-  {
-    id: 2,
-    name: "Leslie Alexander",
-    positiveRate: "83% positive",
-    tokenAmount: 162077734.26,
-    change: "1%",
-    rate: "1 NGN = 1.00  of ETH",
-    limit: "order limit 15,947 - 41,854 ETH",
-    paymentMethod: "Bank Transfer",
-    offererImg: avatarImg,
-    CryptoToken: "ETH",
-    totalPrice: "₦1,000,000",
-  },
-  {
-    id: 3,
-    name: "Leslie Alexander",
-    positiveRate: "83% positive",
-    tokenAmount: 162077734.26,
-    change: "1%",
-    rate: "1 NGN = 0.01 of BTC",
-    limit: "order limit 0.23344 - 0.5677789 BTC",
-    paymentMethod: "Bank Transfer",
-    offererImg: avatarImg,
-    CryptoToken: "USDT",
-    totalPrice: "₦1,000,000",
-  },
-];
 
 const Market: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<"buy" | "sell">("buy");
   const [selectedAsset, setSelectedAsset] = useState<string>("BTC");
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const { address, isConnected } = useAccount();
   const navigate = useNavigate();
-  const handleBack = () => {
-    navigate("/dashboard");
+
+  // ✅ Fetch ads directly from the blockchain
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const ads = await client.readContract({
+          address: CONTRACT_ADDRESS as `0x${string}`,
+          abi: swap24Abi,
+          functionName: "getAllAds",
+        });
+
+        if (ads && Array.isArray(ads)) {
+          const formattedOffers: Offer[] = ads.map((ad: any) => ({
+            id: Number(ad.id),
+            vendor: ad.vendor,
+            cryptoToken: ad.cryptoToken,
+            tokenAmount: ad.tokenAmount
+              ? (Number(ad.tokenAmount) / 1e18).toFixed(4)
+              : "0.0000",
+            priceInNaira: ad.priceInNaira
+              ? `₦${Number(ad.priceInNaira).toLocaleString()}`
+              : "₦0",
+            paymentMethod: ad.paymentMethod,
+            rate: ad.rate || "-",
+            isActive: ad.isActive,
+          }));
+
+          setOffers(formattedOffers.filter((o) => o.isActive)); // ✅ Show only active ads
+        } else {
+          setOffers([]);
+        }
+      } catch (err: any) {
+        console.error("⚠️ Failed to load offers:", err);
+        setError(err.message || "Failed to load offers");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  const handleBack = () => navigate("/dashboard");
+
+  const handleBuyClick = (offer: Offer) => {
+    if (!isConnected) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+    navigate("/buy-asset", { state: { offer, asset: selectedAsset } });
   };
 
   return (
@@ -79,18 +103,18 @@ const Market: React.FC = () => {
         <div className="markettitle">
           <h4 className="succ-market-title">
             <button className="Market-backbtn" onClick={handleBack}>
-              {" "}
-              <img src={backBtn} />
+              <img src={backBtn} alt="Back" />
             </button>
             Market
           </h4>
           <p className="succ-market-p">
-            <img src={bellIcon} />
+            <img src={bellIcon} alt="Notifications" />
           </p>
         </div>
+
         <div className="succ-market-topbar">
           <button className="succ-market-icon">
-            <img src={searchIcon} />
+            <img src={searchIcon} alt="Search" />
           </button>
           <input
             type="text"
@@ -132,53 +156,61 @@ const Market: React.FC = () => {
       <section className="succ-market-body">
         <h3 className="succ-market-subtitle">All Offers</h3>
 
-        <div className="market-inner-wrap">
-          {offers.map((offer) => (
-            <div key={offer.id} className="succ-offer-card">
-              <div className="succ-offer-info">
-                <div className="succ-offer-user">
-                  <div className="succ-avatar">
-                    <img src={offer.offererImg} />
+        {isLoading ? (
+          <p style={{ textAlign: "center", marginTop: "20px" }}>
+            ⏳ Fetching offers from blockchain...
+          </p>
+        ) : error ? (
+          <p style={{ color: "red", textAlign: "center" }}>
+            ⚠️ Failed to load offers: {error}
+          </p>
+        ) : offers.length === 0 ? (
+          <p style={{ textAlign: "center", marginTop: "20px" }}>
+            No offers available
+          </p>
+        ) : (
+          <div className="market-inner-wrap">
+            {offers.map((offer) => (
+              <div key={offer.id} className="succ-offer-card">
+                <div className="succ-offer-info">
+                  <div className="succ-offer-user">
+                    <div className="succ-avatar">
+                      <img src={avatarImg} alt="Vendor" />
+                    </div>
+                    <div>
+                      <p className="succ-name">
+                        {offer.vendor.slice(0, 6)}...
+                        {offer.vendor.slice(-4)}
+                      </p>
+                      <span className="succ-rate">Verified</span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="succ-name">{offer.name}</p>
-                    <span className="succ-rate">{offer.positiveRate}</span>
+
+                  <div className="succ-offer-tokenAmount">
+                    <h2>
+                      <span className="crypto-prefix">
+                        {offer.cryptoToken}
+                      </span>{" "}
+                      {offer.tokenAmount}
+                    </h2>
+                    <span className="succ-offer-change">0%</span>
                   </div>
+
+                  <p className="succ-offer-desc">{offer.priceInNaira}</p>
+                  <p className="succ-offer-limit">{offer.paymentMethod}</p>
+                  <p className="succ-offer-limit">{offer.rate}</p>
                 </div>
 
-                <div className="succ-offer-tokenAmount">
-                  <h2>
-                    <span className="crypto-prefix">{offer.CryptoToken}</span>
-                    &nbsp;
-                    {Number(offer.tokenAmount).toLocaleString(undefined, {
-                      minimumFractionDigits:
-                        offer.tokenAmount % 1 === 0 ? 0 : 2,
-                      maximumFractionDigits: offer.tokenAmount < 1 ? 8 : 2, // show more decimals if less than 1 (for crypto)
-                    })}
-                  </h2>
-
-                  <span className="succ-offer-change">{offer.change}</span>
-                </div>
-
-                <p className="succ-offer-desc">{offer.rate}</p>
-                <p className="succ-offer-limit">{offer.limit}</p>
-
-                <p className="succ-offer-method">{offer.paymentMethod}</p>
+                <button
+                  className="succ-buy-btn"
+                  onClick={() => handleBuyClick(offer)}
+                >
+                  Buy
+                </button>
               </div>
-
-              <button
-                className="succ-buy-btn"
-                onClick={() =>
-                  navigate("/buy-asset", {
-                    state: { offer, asset: selectedAsset },
-                  })
-                }
-              >
-                Buy
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <footer className="succ-market-footer">

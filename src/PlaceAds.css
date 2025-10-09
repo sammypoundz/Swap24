@@ -1,0 +1,141 @@
+.succ-placeads {
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+}
+
+.succ-placeads-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.succ-placeads-header h2 {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.succ-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #131e91;
+}
+
+.succ-placeads-tabs {
+  display: flex;
+  border: 2px solid #d9dbe7;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.succ-tab-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  background: #f3f4f6;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  color: #444;
+  transition: all 0.3s ease;
+}
+
+.succ-tab-btn.active {
+  background: linear-gradient(135deg, #131e91, #2a3aff);
+  color: #fff;
+}
+
+.succ-info-card {
+  background: #f8f9ff;
+  border: 1px solid #e1e5ff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px rgba(19, 30, 145, 0.08);
+}
+
+.succ-info-icon {
+  background: #131e91;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.succ-placeads-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.succ-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.succ-input-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.succ-input-group input {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.2s;
+}
+
+.succ-input-group input:focus {
+  border-color: #131e91;
+  box-shadow: 0 0 0 2px rgba(19, 30, 145, 0.15);
+}
+
+.succ-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  cursor: pointer;
+  background: #fff;
+}
+
+.succ-select:hover {
+  border-color: #131e91;
+}
+
+.succ-submit-btn {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #131e91, #2a3aff);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(19, 30, 145, 0.25);
+}
+
+.succ-submit-btn:hover {
+  background: linear-gradient(135deg, #0e1780, #2130e0);
+  transform: translateY(-2px);
+}
