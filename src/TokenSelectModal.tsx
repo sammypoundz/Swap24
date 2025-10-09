@@ -12,19 +12,16 @@ const supportedTokensByChain: Record<number, any[]> = {
       symbol: "USDC",
       address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       decimals: 6,
-      logo: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
     },
     {
       symbol: "DAI",
       address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
       decimals: 18,
-      logo: "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png",
     },
     {
       symbol: "WETH",
       address: "0xC02aaA39b223FE8D0A0E5C4F27eAD9083C756Cc2",
       decimals: 18,
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
     },
   ],
   11155111: [
@@ -32,19 +29,16 @@ const supportedTokensByChain: Record<number, any[]> = {
       symbol: "USDC",
       address: "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b",
       decimals: 6,
-      logo: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
     },
     {
       symbol: "DAI",
       address: "0xF14f9596430931E177469715c591513308244e8F",
       decimals: 18,
-      logo: "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png",
     },
     {
       symbol: "WETH",
       address: "0xdd13E55209Fd76AfE204dBda4007C227904f0a81",
       decimals: 18,
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
     },
   ],
 };
@@ -53,7 +47,7 @@ interface Token {
   symbol: string;
   address: string;
   decimals: number;
-  logo: string;
+  logo?: string;
   balance?: string;
 }
 
@@ -62,6 +56,14 @@ interface Props {
   onClose: () => void;
   onSelect: (token: Token) => void;
 }
+
+// ✅ Helper to get logo from TrustWallet’s assets repo
+const getTokenLogo = (address: string) => {
+  if (address === "0x0000000000000000000000000000000000000000") {
+    return "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png"; // ETH logo
+  }
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
+};
 
 const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
   const { address, isConnected } = useAccount();
@@ -81,7 +83,7 @@ const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
       try {
         const balances: Token[] = [];
 
-        // ✅ 1. Native ETH balance
+        // ✅ Native ETH balance
         const nativeBalance = await client.getBalance({ address });
         const nativeFormatted = Number(formatUnits(nativeBalance, 18));
         if (nativeFormatted > 0) {
@@ -89,12 +91,12 @@ const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
             symbol: chainId === 1 ? "ETH" : "SEP-ETH",
             address: "0x0000000000000000000000000000000000000000",
             decimals: 18,
-            logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+            logo: getTokenLogo("0x0000000000000000000000000000000000000000"),
             balance: nativeFormatted.toFixed(4),
           });
         }
 
-        // ✅ 2. ERC20 token balances
+        // ✅ ERC-20 tokens
         for (const token of supportedTokens) {
           try {
             const balanceRaw = await client.readContract({
@@ -108,17 +110,18 @@ const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
             if (balance > 0) {
               balances.push({
                 ...token,
+                logo: getTokenLogo(token.address),
                 balance: balance.toFixed(4),
               });
             }
           } catch (err) {
-            console.warn(`⚠️ Error reading ${token.symbol} balance:`, err);
+            console.warn(`Error reading ${token.symbol} balance:`, err);
           }
         }
 
         setTokens(balances);
       } catch (err) {
-        console.error("❌ Error fetching token balances:", err);
+        console.error("Error fetching token balances:", err);
       } finally {
         setLoading(false);
       }
@@ -172,7 +175,7 @@ const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
                   className="succ-token-logo"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).src =
-                      "https://cryptologos.cc/logos/generic-token-generic-logo.png";
+                      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png";
                   }}
                 />
                 <div className="succ-token-info">
