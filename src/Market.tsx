@@ -40,7 +40,8 @@ const Market: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
+  // const { address, isConnected } = useAccount();
   const navigate = useNavigate();
 
   // ✅ Fetch ads directly from the blockchain
