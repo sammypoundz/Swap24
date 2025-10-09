@@ -13,7 +13,7 @@ import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import ERC20_ABI from "./abi/ERC20.json";
 import TokenSelectModal from "./TokenSelectModal";
 
-const MARKETPLACE_CONTRACT = "0xYourMarketplaceContract";
+const MARKETPLACE_CONTRACT = "0x7b66522d365e4c906b89d2263d37c2c306264f89";
 
 const PlaceAds: React.FC = () => {
   const navigate = useNavigate();
@@ -88,7 +88,7 @@ const PlaceAds: React.FC = () => {
     <div className="succ-placeads">
       {/* Header */}
       <div className="succ-placeads-header">
-        <button className="succ-back-btn" onClick={() => navigate(-1)}>
+        <button className="succ-back-btn" onClick={() => navigate("/dashboard")}>
           <ArrowLeft size={20} />
         </button>
         <h2>Place an Ad</h2>
