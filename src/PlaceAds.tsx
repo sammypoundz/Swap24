@@ -9,11 +9,13 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-// import { formatUnits, parseUnits } from "viem";
+import { parseUnits } from "viem";
 import ERC20_ABI from "./abi/ERC20.json";
+import MARKET_ABI from "./contracts/Swap24MarketABI.json"; // ✅ Updated ABI for new contract
 import TokenSelectModal from "./TokenSelectModal";
 
-const MARKETPLACE_CONTRACT = "0x7b66522d365e4c906b89d2263d37c2c306264f89";
+// ✅ Update this when you redeploy
+const MARKETPLACE_CONTRACT = "0x12f1e05c7224a3f1f2b55ce1e7152632d9d5399e";
 
 const PlaceAds: React.FC = () => {
   const navigate = useNavigate();
@@ -26,57 +28,94 @@ const PlaceAds: React.FC = () => {
   const [selectedToken, setSelectedToken] = useState<any>(null);
   const [amount, setAmount] = useState("");
   const [price, setPrice] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
+  const [rate, setRate] = useState("");
   const [isApproved, setIsApproved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // ✅ New loading state
   const [usdRate] = useState(1600);
 
-  // ✅ Check token allowance
+  // ✅ Check ERC20 approval on token select
   useEffect(() => {
-    if (!selectedToken || !address) return;
+    if (!selectedToken || !address || !client) return;
 
     const checkAllowance = async () => {
       try {
-        const allowance = await client?.readContract({
+        const allowance = await client.readContract({
           address: selectedToken.address as `0x${string}`,
           abi: ERC20_ABI,
           functionName: "allowance",
           args: [address, MARKETPLACE_CONTRACT],
         });
-
-        setIsApproved(Number(allowance) > 0);
+        setIsApproved(Number(allowance) >= parseFloat(amount || "0"));
       } catch (err) {
-        console.error("Error reading allowance:", err);
+        console.error("Error checking allowance:", err);
       }
     };
 
     checkAllowance();
-  }, [selectedToken, address]);
+  }, [selectedToken, address, amount, client]);
 
-  // ✅ Approve token
+  // ✅ Approve ERC20 token for escrow
   const handleApprove = async () => {
-    if (!walletClient || !selectedToken) return;
+    if (!walletClient) return alert("Wallet not connected");
+    if (!client) return alert("Public client not initialized");
+    if (!selectedToken) return alert("Select a token first");
+    if (!amount) return alert("Enter amount before approving");
 
     try {
-      await walletClient.writeContract({
+      setIsLoading(true);
+      const txHash = await walletClient.writeContract({
         address: selectedToken.address as `0x${string}`,
         abi: ERC20_ABI,
         functionName: "approve",
-        args: [MARKETPLACE_CONTRACT, BigInt(2 ** 256 - 1)],
+        args: [MARKETPLACE_CONTRACT, parseUnits(amount, selectedToken.decimals)],
       });
+
+      await client.waitForTransactionReceipt({ hash: txHash });
+      alert(`✅ ${selectedToken.symbol} approved successfully!`);
       setIsApproved(true);
-      alert(`${selectedToken.symbol} approved successfully!`);
     } catch (err) {
-      console.error("Approve failed:", err);
-      alert("Approval failed");
+      console.error("Approval failed:", err);
+      alert("Approval failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // ✅ Post Ad handler
+  // ✅ Create Ad (calls createAd on the new contract)
   const handlePostAd = async () => {
+    if (!walletClient) return alert("Wallet not connected");
     if (!selectedToken) return alert("Select a token first");
-    if (!isApproved) return alert("Approve token first");
+    if (!isApproved && selectedToken.symbol !== "ETH")
+      return alert(`Please approve ${selectedToken.symbol} first`);
+    if (!amount || !price) return alert("Fill all fields");
 
-    // Future: Call backend or smart contract here
-    alert(`Ad posted successfully for ${selectedToken.symbol}!`);
+    try {
+      setIsLoading(true);
+      const txHash = await walletClient.writeContract({
+        address: MARKETPLACE_CONTRACT,
+        abi: MARKET_ABI,
+        functionName: "createAd",
+        args: [
+          selectedToken.address,
+          selectedToken.symbol,
+          parseUnits(amount, selectedToken.decimals),
+          BigInt(price),
+          paymentMethod,
+          rate ||
+            `1 NGN = ${(1 / parseFloat(price)).toFixed(6)} ${
+              selectedToken.symbol
+            }`,
+        ],
+      });
+
+      alert(`🎉 Ad created successfully!\nTx: ${txHash}`);
+    } catch (err) {
+      console.error("Ad creation failed:", err);
+      alert("Transaction failed. Please check console for details.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const estimatedValue =
@@ -156,9 +195,7 @@ const PlaceAds: React.FC = () => {
             onChange={(e) => setPrice(e.target.value)}
           />
           {price && (
-            <small>
-              ≈ ${(parseFloat(price) / usdRate).toFixed(2)} per token
-            </small>
+            <small>≈ ${(parseFloat(price) / usdRate).toFixed(2)} per token</small>
           )}
         </div>
 
@@ -178,6 +215,28 @@ const PlaceAds: React.FC = () => {
           )}
         </div>
 
+        {/* Payment Method */}
+        <div className="succ-input-group">
+          <label>Payment Method</label>
+          <input
+            type="text"
+            placeholder="e.g. Bank Transfer"
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+        </div>
+
+        {/* Optional Rate */}
+        <div className="succ-input-group">
+          <label>Exchange Rate</label>
+          <input
+            type="text"
+            placeholder="e.g. 1 NGN = 0.00031 BTC"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
+        </div>
+
         {/* Summary */}
         <div className="succ-summary">
           <p>
@@ -185,17 +244,44 @@ const PlaceAds: React.FC = () => {
           </p>
         </div>
 
-        {/* Approve Button */}
-        {!isApproved && selectedToken && (
-          <button className="succ-approve-btn" onClick={handleApprove}>
-            Approve {selectedToken.symbol}
+        {/* ✅ Approve or Submit Button (one at a time) */}
+        {selectedToken && selectedToken.symbol !== "ETH" ? (
+          !isApproved ? (
+            <button
+              className="succ-approve-btn"
+              onClick={handleApprove}
+              disabled={isLoading}
+            >
+              {isLoading
+                ? `Approving ${selectedToken.symbol}...`
+                : `Approve ${selectedToken.symbol}`}
+            </button>
+          ) : (
+            <button
+              className="succ-submit-btn"
+              onClick={handlePostAd}
+              disabled={isLoading}
+            >
+              {isLoading
+                ? "Posting Ad..."
+                : tab === "buy"
+                ? "Post Buy Ad"
+                : "Post Sell Ad"}
+            </button>
+          )
+        ) : (
+          <button
+            className="succ-submit-btn"
+            onClick={handlePostAd}
+            disabled={isLoading}
+          >
+            {isLoading
+              ? "Posting Ad..."
+              : tab === "buy"
+              ? "Post Buy Ad"
+              : "Post Sell Ad"}
           </button>
         )}
-
-        {/* Submit */}
-        <button className="succ-submit-btn" onClick={handlePostAd}>
-          {tab === "buy" ? "Post Buy Ad" : "Post Sell Ad"}
-        </button>
       </div>
 
       {/* Token Select Modal */}
