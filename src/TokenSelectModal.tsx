@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X, Search } from "lucide-react";
 import { useAccount, usePublicClient, useChainId } from "wagmi";
-import { formatUnits } from "viem";
+import { formatUnits, getAddress } from "viem"; // ✅ added getAddress
 import ERC20_ABI from "./abi/ERC20.json";
 import "./PlaceAds.css";
 
@@ -57,12 +57,22 @@ interface Props {
   onSelect: (token: Token) => void;
 }
 
-// ✅ Helper to get logo from TrustWallet’s assets repo
+// ✅ Helper to get logo from TrustWallet’s assets repo (with checksum fix)
 const getTokenLogo = (address: string) => {
-  if (address === "0x0000000000000000000000000000000000000000") {
+  if (
+    !address ||
+    address === "0x0000000000000000000000000000000000000000"
+  ) {
     return "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png"; // ETH logo
   }
-  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
+
+  try {
+    // TrustWallet requires checksummed addresses
+    const checksummed = getAddress(address);
+    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${checksummed}/logo.png`;
+  } catch {
+    return "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png";
+  }
 };
 
 const TokenSelectModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
