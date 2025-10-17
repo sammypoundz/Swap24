@@ -22,6 +22,8 @@ import Market from "./Market";
 import BuyAsset from "./buyAsset";
 import PlaceAds from "./PlaceAds"; // ✅ New Import
 
+import MyAds from "./MyAds";
+
 // 🔹 RainbowKit Wallet Setup
 const { connectors } = getDefaultWallets({
   appName: "Swap24",
@@ -86,6 +88,7 @@ export default function App() {
               
               {/* ✅ New Route for Place Ads */}
               <Route path="/place-ads" element={<PlaceAds />} />
+               <Route path="/my-ads" element={<MyAds />} />
             </Routes>
           </Router>
         </RainbowKitProvider>

@@ -38,7 +38,7 @@ const BottomNav: React.FC = () => {
 
       <div
         className={`nav-item ${location.pathname === "/trade" ? "active" : ""}`}
-        onClick={() => handleNavigate("/place-ads")}
+        onClick={() => handleNavigate("/my-ads")}
       >
         <img src={tradeIcon} className="customIcon" alt="Trade" />
         <span>Trade</span>
