@@ -20,7 +20,7 @@ const client = createPublicClient({
 });
 
 // ✅ Your deployed contract address
-const CONTRACT_ADDRESS = "0x12f1e05c7224a3f1f2b55ce1e7152632d9d5399e";
+const CONTRACT_ADDRESS = "0x4f12d6fb32891acb6221d5c0f6b90a11b6da1427";
 
 interface Offer {
   id: number;

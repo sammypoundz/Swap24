@@ -19,6 +19,12 @@
         "internalType": "uint256",
         "name": "amountReturned",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isETH",
+        "type": "bool"
       }
     ],
     "name": "AdCancelled",
@@ -68,6 +74,18 @@
         "internalType": "string",
         "name": "paymentMethod",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "rate",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isETH",
+        "type": "bool"
       }
     ],
     "name": "AdCreated",
@@ -146,6 +164,11 @@
         "internalType": "bool",
         "name": "isActive",
         "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isETH",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -199,7 +222,7 @@
     ],
     "name": "createAd",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -257,6 +280,11 @@
           {
             "internalType": "bool",
             "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isETH",
             "type": "bool"
           }
         ],
@@ -318,6 +346,11 @@
             "internalType": "bool",
             "name": "isActive",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isETH",
+            "type": "bool"
           }
         ],
         "internalType": "struct Swap24Market.Ad[]",
@@ -340,5 +373,9 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]
