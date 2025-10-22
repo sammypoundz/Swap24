@@ -35,10 +35,16 @@ const PhoneTfa: React.FC = () => {
       const res = await loginVerifyOtp({ email, otp: code });
       console.log("OTP verified ✅:", res.data);
 
-      // 👉 store token if needed
-      localStorage.setItem("authToken", res.data.token);
+      // ✅ Check response and store necessary details
+      if (res.data?.token) {
+        localStorage.setItem("authToken", res.data.token);
+      }
 
-      // ✅ redirect to dashboard
+      if (res.data?.userId) {
+        localStorage.setItem("userId", res.data.userId);
+      }
+
+      // ✅ Redirect to dashboard
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "OTP verification failed");

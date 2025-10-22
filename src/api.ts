@@ -1,13 +1,14 @@
-// src/api.ts
 import axios from "axios";
+import { createPublicClient, http } from "viem";
+import { sepolia } from "viem/chains";
 
-// ✅ Dynamically choose base URL depending on environment
+/* ========== AXIOS SETUP ========== */
 const API = axios.create({
   baseURL:
     import.meta.env.MODE === "development"
       ? "http://localhost:5000/api" // local backend
       : import.meta.env.VITE_API_BASE_URL, // production (Render)
-  withCredentials: true, // 👈 include if you’ll use cookies/sessions later
+  withCredentials: true,
 });
 
 /* ========== TYPES ========== */
@@ -32,7 +33,7 @@ export interface UserProfile {
   walletAddress?: string | null;
   balance: {
     naira: number;
-    crypto: Record<string, number>; // flexible for BTC, ETH, etc.
+    crypto: Record<string, number>;
   };
   transactions: Transaction[];
 }
@@ -46,7 +47,7 @@ export interface RegisterResponse {
 
 export interface SigninInitResponse {
   message: string;
-  step: string; // e.g. "VERIFY_OTP"
+  step: string;
   phone: string;
 }
 
@@ -123,3 +124,170 @@ export const addUserTransaction = (data: {
     "/transactions/add",
     data
   );
+
+/* ========== SMART CONTRACT INTEGRATION HELPER ========== */
+
+/**
+ * Automatically record a transaction after successful smart contract execution.
+ * This function:
+ * 1️⃣ Reads userId from localStorage
+ * 2️⃣ Posts transaction to the backend
+ * 3️⃣ Handles optional conversion or txHash logging
+ */
+export const recordTransactionAfterContract = async ({
+  type,
+  asset,
+  amount,
+  valueInNaira,
+  txHash,
+  description,
+}: {
+  type: string;
+  asset: string;
+  amount: number;
+  valueInNaira?: number;
+  txHash?: string;
+  description?: string;
+}) => {
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    console.warn("⚠️ No userId found in localStorage — skipping transaction record.");
+    return;
+  }
+
+  try {
+    const res = await addUserTransaction({
+      userId,
+      type,
+      asset,
+      amount,
+      valueInNaira: valueInNaira || 0,
+      status: "completed",
+      txHash,
+      transactionDescription: description || "Blockchain transaction recorded",
+    });
+
+    console.log("✅ Transaction recorded successfully:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ Error recording transaction:", error.response?.data || error);
+    throw error;
+  }
+};
+
+/* ========== AD CANCELLATION LOGGER (wallet-based safe) ========== */
+export const logAdCancellation = async ({
+  // walletAddress,
+  cryptoToken,
+  tokenAmount,
+  priceInNaira,
+  txHash,
+  paymentMethod,
+  adId,
+}: {
+  walletAddress: string;
+  cryptoToken: string;
+  tokenAmount: number;
+  priceInNaira: number;
+  txHash: string;
+  paymentMethod: string;
+  adId: number;
+}) => {
+  try {
+    // ✅ Try getting userId from localStorage first
+    let userId = localStorage.getItem("userId");
+
+    // ✅ If not found, attempt to fetch user profile via wallet address
+    // if (!userId && walletAddress) {
+    //   console.log("🔍 Fetching user by wallet address...");
+    //   const res = await API.get(`/user/by-wallet/${walletAddress}`);
+    //   userId = res.data?.user?._id;
+    // }
+
+    if (!userId) {
+      console.warn("⚠️ No valid userId found — skipping backend sync.");
+      return;
+    }
+
+    const valueInNaira = tokenAmount * priceInNaira;
+
+    console.log("🧾 Logging ad cancellation transaction:", {
+      userId,
+      cryptoToken,
+      tokenAmount,
+      valueInNaira,
+    });
+
+    const result = await addUserTransaction({
+      userId,
+      type: "adCancellation",
+      asset: cryptoToken,
+      amount: tokenAmount,
+      valueInNaira,
+      status: "completed",
+      txHash,
+      transactionDescription: `Cancelled Ad #${adId} — refunded ${tokenAmount} ${cryptoToken} via ${paymentMethod}`,
+    });
+
+    console.log("✅ Transaction successfully logged:", result.data);
+    return result.data;
+  } catch (err: any) {
+    console.error("❌ Error logging ad cancellation:", err.response?.data || err);
+  }
+};
+
+
+/* ========== BLOCKCHAIN: GET ADS (viem) ========== */
+
+export const getAllAdsFromContract = async () => {
+  try {
+    const CONTRACT_ADDRESS = import.meta.env
+      .VITE_SWAP24_CONTRACT_ADDRESS as `0x${string}`;
+
+    const CONTRACT_ABI = [
+      {
+        name: "getAllAds",
+        type: "function",
+        stateMutability: "view",
+        inputs: [],
+        outputs: [
+          {
+            components: [
+              { internalType: "uint256", name: "id", type: "uint256" },
+              { internalType: "address payable", name: "vendor", type: "address" },
+              { internalType: "address", name: "tokenAddress", type: "address" },
+              { internalType: "string", name: "cryptoToken", type: "string" },
+              { internalType: "uint256", name: "tokenAmount", type: "uint256" },
+              { internalType: "uint256", name: "priceInNaira", type: "uint256" },
+              { internalType: "string", name: "paymentMethod", type: "string" },
+              { internalType: "string", name: "rate", type: "string" },
+              { internalType: "bool", name: "isActive", type: "bool" },
+              { internalType: "bool", name: "isETH", type: "bool" },
+            ],
+            internalType: "struct Swap24Market.Ad[]",
+            name: "",
+            type: "tuple[]",
+          },
+        ],
+      },
+    ] as const;
+
+    const client = createPublicClient({
+      chain: sepolia, // change this if not using Sepolia
+      transport: http(),
+    });
+
+    const ads = await client.readContract({
+      address: CONTRACT_ADDRESS,
+      abi: CONTRACT_ABI,
+      functionName: "getAllAds",
+    });
+
+    console.log("📦 Ads fetched from blockchain:", ads);
+    return ads;
+  } catch (error: any) {
+    console.error("❌ Failed to fetch ads from blockchain:", error);
+    throw error;
+  }
+};

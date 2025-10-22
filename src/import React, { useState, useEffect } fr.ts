@@ -9,11 +9,10 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { parseUnits } from "viem";
+import { parseUnits } from "viem"; // removed unused formatUnits
 import ERC20_ABI from "./abi/ERC20.json";
 import MARKET_ABI from "./contracts/Swap24MarketABI.json";
 import TokenSelectModal from "./TokenSelectModal";
-import { addUserTransaction } from "./api"; // ✅ backend integration
 
 // ✅ Replace after redeploy
 const MARKETPLACE_CONTRACT = "0x4f12d6fb32891acb6221d5c0f6b90a11b6da1427";
@@ -40,6 +39,7 @@ const PlaceAds: React.FC = () => {
     const checkAllowance = async () => {
       if (!selectedToken || !address || !client) return;
 
+      // Skip for native ETH
       if (
         selectedToken.symbol === "ETH" ||
         selectedToken.symbol === "SepoliaETH"
@@ -98,7 +98,7 @@ const PlaceAds: React.FC = () => {
     }
   };
 
-  // ✅ Create Ad
+  // ✅ Create Ad (ETH or ERC20)
   const handlePostAd = async () => {
     if (!walletClient || !client)
       return alert("⚠️ Please connect your wallet first.");
@@ -115,16 +115,21 @@ const PlaceAds: React.FC = () => {
     try {
       setIsLoading(true);
 
+      // 🧮 Convert user input
       const tokenAmount = parseUnits(amount, selectedToken.decimals);
       const priceInNaira = BigInt(price);
+
+      // 🪙 Use address(0) for ETH, otherwise token address
       const tokenAddress = isETH
         ? "0x0000000000000000000000000000000000000000"
         : selectedToken.address;
 
+      // 💬 Generate dynamic rate if empty
       const computedRate =
         rate ||
         `1 NGN = ${(1 / parseFloat(price)).toFixed(6)} ${selectedToken.symbol}`;
 
+      // ✅ Prepare args for contract
       const args: readonly [
         `0x${string}`,
         string,
@@ -141,41 +146,25 @@ const PlaceAds: React.FC = () => {
         computedRate,
       ];
 
+      console.log("🚀 Posting ad with args:", args);
+
+      // ✅ Send transaction (only attach ETH value for native)
       const txHash = await walletClient.writeContract({
         address: MARKETPLACE_CONTRACT,
         abi: MARKET_ABI,
         functionName: "createAd",
         args,
-        ...(isETH ? { value: tokenAmount } : {}),
+        ...(isETH ? { value: tokenAmount } : {}), // <== 🔥 key fix here
       });
 
+      console.log("✅ Transaction sent:", txHash);
+
+      // ⏳ Wait for transaction confirmation
       const receipt = await client.waitForTransactionReceipt({ hash: txHash });
       if (receipt.status === "success") {
         alert(`🎉 Ad created successfully!\nTx: ${txHash}`);
-
-        const storedUser = localStorage.getItem("userId");
-        const userId = storedUser || "";
-
-        if (!userId) {
-          alert("⚠️ User not found in local storage. Please log in again.");
-          setIsLoading(false);
-          return;
-        }
-
-        await addUserTransaction({
-          userId,
-          type: "adPlacement",
-          asset: selectedToken.symbol,
-          amount: parseFloat(amount),
-          valueInNaira: parseFloat(price) * parseFloat(amount),
-          status: "completed",
-          txHash,
-          transactionDescription: `Placed a ${tab} ad for ${amount} ${selectedToken.symbol} at ₦${price} via ${paymentMethod}`,
-        });
-
-        console.log("✅ Transaction logged as adPlacement");
       } else {
-        alert("⚠️ Transaction failed on-chain.");
+        alert(`⚠️ Transaction failed on-chain.`);
       }
     } catch (err: any) {
       console.error("❌ Ad creation failed:", err);
@@ -189,124 +178,6 @@ const PlaceAds: React.FC = () => {
     }
   };
 
-  // ✅ Cancel Ad and log transaction properly using on-chain data
-  // const handleCancelAd = async (adId: number) => {
-  //   if (!walletClient || !client)
-  //     return alert("⚠️ Please connect your wallet first.");
-
-  //   try {
-  //     setIsLoading(true);
-
-  //     // ✅ Step 1: Fetch ad details BEFORE cancellation
-  //     console.log("🔍 Fetching ad details before cancellation...");
-  //     const adData: any = await client.readContract({
-  //       address: MARKETPLACE_CONTRACT,
-  //       abi: MARKET_ABI,
-  //       functionName: "getAd",
-  //       args: [BigInt(adId)],
-  //     });
-
-  //     if (!adData) {
-  //       alert("⚠️ Ad not found on blockchain.");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     // ✅ Extract proper values from adData
-  //     const [
-  //       id,
-  //       vendor,
-  //       tokenAddress,
-  //       cryptoToken,
-  //       tokenAmount,
-  //       priceInNaira,
-  //       paymentMethod,
-  //       rate,
-  //       isActive,
-  //       isETH,
-  //     ] = adData;
-
-  //     console.log("📦 Ad data fetched:", {
-  //       id,
-  //       vendor,
-  //       tokenAddress,
-  //       cryptoToken,
-  //       tokenAmount: tokenAmount.toString(),
-  //       priceInNaira: priceInNaira.toString(),
-  //       paymentMethod,
-  //       rate,
-  //       isETH,
-  //     });
-
-  //     // ✅ Step 2: Execute on-chain cancellation
-  //     const txHash = await walletClient.writeContract({
-  //       address: MARKETPLACE_CONTRACT,
-  //       abi: MARKET_ABI,
-  //       functionName: "cancelAd",
-  //       args: [BigInt(adId)],
-  //     });
-
-  //     const receipt = await client.waitForTransactionReceipt({ hash: txHash });
-
-  //     if (receipt.status === "success") {
-  //       alert(`✅ Ad #${adId} cancelled successfully!`);
-
-  //       // ✅ Step 3: Log the transaction to backend
-  //       const storedUser = localStorage.getItem("userId");
-  //       const userId = storedUser || "";
-
-  //       if (!userId) {
-  //         alert("⚠️ User not found in local storage. Please log in again.");
-  //         setIsLoading(false);
-  //         return;
-  //       }
-
-  //       const tokenDecimals = isETH ? 18 : 18; // Adjust based on known token decimals
-  //       const cancelledAmount = Number(tokenAmount) / 10 ** tokenDecimals;
-  //       const cancelledPrice = Number(priceInNaira);
-  //       const totalRefund = cancelledAmount * cancelledPrice;
-
-  //       console.log("💰 Logging refund transaction:", {
-  //         userId,
-  //         asset: cryptoToken,
-  //         amount: cancelledAmount,
-  //         valueInNaira: totalRefund,
-  //       });
-
-  //       try {
-  //         const res = await addUserTransaction({
-  //           userId,
-  //           type: "adCancellation",
-  //           asset: cryptoToken,
-  //           amount: cancelledAmount,
-  //           valueInNaira: totalRefund,
-  //           status: "completed",
-  //           txHash,
-  //           transactionDescription: `Cancelled Ad #${adId} — refunded ${cancelledAmount} ${cryptoToken} to wallet via ${paymentMethod}`,
-  //         });
-
-  //         console.log("✅ Transaction logged successfully:", res.data);
-  //       } catch (logErr) {
-  //         console.error("❌ Failed to log cancellation:", logErr);
-  //         alert(
-  //           "⚠️ Cancelled successfully on-chain but not logged in backend."
-  //         );
-  //       }
-  //     } else {
-  //       alert("⚠️ Ad cancellation failed on-chain.");
-  //     }
-  //   } catch (err: any) {
-  //     console.error("❌ Ad cancellation failed:", err);
-  //     alert(
-  //       `Failed to cancel ad.\nReason: ${
-  //         err?.shortMessage || err?.message || "Unknown error"
-  //       }`
-  //     );
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const estimatedValue =
     amount && price
       ? (parseFloat(amount) * parseFloat(price)).toLocaleString()
@@ -314,16 +185,18 @@ const PlaceAds: React.FC = () => {
 
   return (
     <div className="succ-placeads">
+      {/* Header */}
       <div className="succ-placeads-header">
         <button
           className="succ-back-btn"
-          onClick={() => navigate("/my-ads")}
+          onClick={() => navigate("/dashboard")}
         >
           <ArrowLeft size={20} />
         </button>
         <h2>Place an Ad</h2>
       </div>
 
+      {/* Tabs */}
       <div className="succ-placeads-tabs">
         <button
           className={`succ-tab-btn ${tab === "buy" ? "active" : ""}`}
@@ -339,6 +212,7 @@ const PlaceAds: React.FC = () => {
         </button>
       </div>
 
+      {/* Info Card */}
       <div className="succ-info-card">
         <div className="succ-info-icon">
           <CreditCard size={20} />
@@ -349,6 +223,7 @@ const PlaceAds: React.FC = () => {
         </div>
       </div>
 
+      {/* Form */}
       <div className="succ-placeads-body">
         {/* Token Selector */}
         <div className="succ-input-group">
@@ -451,32 +326,21 @@ const PlaceAds: React.FC = () => {
               : `Approve ${selectedToken.symbol}`}
           </button>
         ) : (
-          <>
-            <button
-              className="succ-submit-btn"
-              onClick={handlePostAd}
-              disabled={isLoading}
-            >
-              {isLoading
-                ? "Posting Ad..."
-                : tab === "buy"
-                ? "Post Buy Ad"
-                : "Post Sell Ad"}
-            </button>
-
-            {/* ✅ Cancel Ad Example */}
-            {/* <button
-              className="succ-cancel-btn"
-              onClick={() => handleCancelAd(1)} // 🔧 Replace with actual ad ID
-              disabled={isLoading}
-              style={{ marginTop: "10px", background: "#b71c1c" }}
-            >
-              Cancel Ad
-            </button> */}
-          </>
+          <button
+            className="succ-submit-btn"
+            onClick={handlePostAd}
+            disabled={isLoading}
+          >
+            {isLoading
+              ? "Posting Ad..."
+              : tab === "buy"
+              ? "Post Buy Ad"
+              : "Post Sell Ad"}
+          </button>
         )}
       </div>
 
+      {/* Token Modal */}
       <TokenSelectModal
         isOpen={isTokenModalOpen}
         onClose={() => setTokenModalOpen(false)}

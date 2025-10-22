@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "./PlaceAds.css"; // Reuse same style
+import "./PlaceAds.css";
 import { useNavigate } from "react-router-dom";
 import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { ArrowLeft, PlusCircle, Eye, XCircle, Loader2 } from "lucide-react";
 import MARKET_ABI from "./contracts/Swap24MarketABI.json";
+import { addUserTransaction } from "./api"; // ✅ Import the API helper
 
 const MARKETPLACE_CONTRACT = "0x4f12d6fb32891acb6221d5c0f6b90a11b6da1427";
 
@@ -29,9 +30,9 @@ const MyAds: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
   const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [loadingAdId, setLoadingAdId] = useState<bigint | null>(null); // ✅ Track which ad is being cancelled
+  const [loadingAdId, setLoadingAdId] = useState<bigint | null>(null);
 
-  // ✅ Fetch all ads
+  // ✅ Fetch all ads for the logged-in vendor
   const fetchMyAds = async () => {
     if (!client || !address) return;
 
@@ -42,7 +43,6 @@ const MyAds: React.FC = () => {
         functionName: "getAllAds",
       })) as Ad[];
 
-      // Filter and sort ads (active first)
       const myAds = allAds
         .filter((ad) => ad.vendor.toLowerCase() === address.toLowerCase())
         .sort((a, b) => (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1));
@@ -53,33 +53,69 @@ const MyAds: React.FC = () => {
     }
   };
 
-  // ✅ Cancel ad with preloader
-  const handleCancelAd = async (adId: bigint) => {
-    if (!walletClient || !client) return alert("⚠️ Connect wallet first.");
-    if (!window.confirm("Are you sure you want to cancel this ad?")) return;
+  // ✅ Cancel ad & record transaction in backend
+ const handleCancelAd = async (adId: bigint) => {
+  if (!walletClient || !client) return alert("⚠️ Connect wallet first.");
+  if (!window.confirm("Are you sure you want to cancel this ad?")) return;
 
-    try {
-      setLoadingAdId(adId);
+  try {
+    setLoadingAdId(adId);
 
-      const txHash = await walletClient.writeContract({
-        address: MARKETPLACE_CONTRACT,
-        abi: MARKET_ABI,
-        functionName: "cancelAd",
-        args: [adId],
-      });
-
-      await client.waitForTransactionReceipt({ hash: txHash });
-      alert(`✅ Ad cancelled!\nTx: ${txHash}`);
-
-      // Refresh list and keep canceled ads at bottom
-      await fetchMyAds();
-    } catch (err) {
-      console.error("❌ Cancel failed:", err);
-      alert("Failed to cancel ad. See console for details.");
-    } finally {
-      setLoadingAdId(null);
+    // Get user ID from localStorage
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("User not found. Please log in again.");
+      return;
     }
-  };
+
+    // Get ad details from current list
+    const adToCancel = ads.find((a) => a.id === adId);
+    if (!adToCancel) {
+      alert("Ad not found in local list. Try refreshing the page.");
+      return;
+    }
+
+    // Execute the on-chain cancel transaction
+    const txHash = await walletClient.writeContract({
+      address: MARKETPLACE_CONTRACT,
+      abi: MARKET_ABI,
+      functionName: "cancelAd",
+      args: [adId],
+    });
+
+    console.log("⛓️ Transaction hash:", txHash);
+
+    // Wait for confirmation
+    await client.waitForTransactionReceipt({ hash: txHash });
+
+    // Convert tokenAmount to human-readable
+    const tokenAmount = Number(adToCancel.tokenAmount) / 1e18;
+    const valueInNaira = Number(adToCancel.priceInNaira);
+
+    // ✅ Log the transaction in the backend
+    const res = await addUserTransaction({
+      userId,
+      type: "adCancellation",
+      asset: adToCancel.cryptoToken,
+      amount: tokenAmount,
+      valueInNaira,
+      status: "completed",
+      txHash,
+      transactionDescription: `Ad with ID ${adId} was cancelled`,
+    });
+
+    console.log("✅ Transaction logged in backend:", res);
+
+    alert("✅ Ad cancelled successfully!");
+    await fetchMyAds(); // Refresh ads
+  } catch (err) {
+    console.error("❌ Error cancelling ad:", err);
+    alert("Failed to cancel ad. Check console for details.");
+  } finally {
+    setLoadingAdId(null);
+  }
+};
+
 
   useEffect(() => {
     fetchMyAds();

@@ -1,29 +1,53 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// dashboard.tsx
+import React, { useRef } from "react";
 import "./Dashboard.css";
-import { FaBell, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { getUserTransactions } from "./api";
-import type { Transaction } from "./api";
-import { io, Socket } from "socket.io-client";
+import {
+  FaBell,
+  FaHome,
+  FaExchangeAlt,
+  FaShoppingCart,
+  FaUser,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
-import EmptyState from "./EmptyState";
+// RainbowKit
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+
+// import images from assets
+import btcBg from "./assets/Lines.svg";
+import ethBg from "./assets/Lines.svg";
+import ltcBg from "./assets/Lines.svg";
 import illCoin1 from "./assets/vecteezy_flat-vector-illustration-of-gold-icon-suitable-for-design_6607020 1.svg";
 import illCoin2 from "./assets/vecteezy_coin-vector-icon-design_21225566 1.svg";
-import btcBg from "./assets/Lines.svg";
-import BottomNav from "./BottomNav";
-
-import BTC from "./assets/BTC - Bitcoin.svg";
-import ETH from "./assets/ETC - Binance-Peg Ethereum Classic.svg";
+import BtC from "./assets/BTC - Bitcoin.svg";
+import ETC from "./assets/ETC - Binance-Peg Ethereum Classic.svg";
+import homeIcon from "./assets/Home_light (1).svg";
+import tradeIcon from "./assets/Spot v4.svg";
+import marketIcon from "./assets/market.svg";
+import profileIcon from "./assets/User_fill.svg";
 
 const Dashboard: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  // const [navOpen, setNavOpen] = useState(false); // 👈 toggle state for nav
+  const ads = [
+    {
+      title: "Carl Wants to sell 0.5 BTC",
+      subtitle: "In Naira ➜ ₦4,500.00",
+      bg: btcBg,
+    },
+    {
+      title: "Mary Wants to buy 1.2 ETH",
+      subtitle: "In Naira ➜ ₦1,200.00",
+      bg: ethBg,
+    },
+    {
+      title: "Tom Wants to sell 2.0 LTC",
+      subtitle: "In Naira ➜ ₦800.00",
+      bg: ltcBg,
+    },
+  ];
 
   const trackRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<Socket | null>(null);
-  const navigate = useNavigate(); // ✅ initialize navigate
 
   const scrollPrev = () => {
     if (trackRef.current) {
@@ -43,67 +67,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const userId = localStorage.getItem("userId");
+  // // 🔹 wagmi hooks
+  // const { address, isConnected } = useAccount();
 
-    if (!authToken || !userId) {
-      console.warn("⚠️ No auth token or userId found, redirecting to sign-in");
-      navigate("/signin"); // ✅ redirect if not found
-      return;
-    }
-
-    if (!userId) {
-      console.warn("⚠️ No userId found in localStorage");
-      setLoading(false);
-      return;
-    }
-
-    // ✅ Fetch initial transactions
-    const fetchTransactions = async () => {
-      try {
-        const res = await getUserTransactions(userId);
-        if (res.data?.transactions) {
-          setTransactions(res.data.transactions);
-        } else {
-          setTransactions([]);
-        }
-      } catch (err) {
-        console.error("❌ Error fetching transactions:", err);
-        setTransactions([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTransactions();
-
-    // ✅ Setup socket connection
-    const SOCKET_URL =
-      import.meta.env.MODE === "development"
-        ? "http://localhost:5000"
-        : import.meta.env.VITE_API_BASE_URL; // 🔹 replace with your Render backend URL
-
-    socketRef.current = io(SOCKET_URL, {
-      withCredentials: true,
-    });
-
-    socketRef.current.on("connect", () => {
-      console.log("🔗 Connected to socket:", socketRef.current?.id);
-      socketRef.current?.emit("joinRoom", userId); // join personal room
-    });
-
-    // ✅ Listen for new transactions
-    socketRef.current.on("newTransaction", (transaction: Transaction) => {
-      console.log("📩 New transaction received:", transaction);
-      setTransactions((prev) => [transaction, ...prev]); // prepend new tx
-    });
-
-    // ✅ Cleanup on unmount
-    return () => {
-      socketRef.current?.off("newTransaction");
-      socketRef.current?.disconnect();
-    };
-  }, []);
+  // // helper to shorten wallet address
+  // const shortenAddress = (addr: string) =>
+  //   `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
     <div className="dashboard-container">
@@ -115,7 +84,16 @@ const Dashboard: React.FC = () => {
             alt="User"
             className="avatar"
           />
+          {/* <div>
+            <h3 className="username">John Doe</h3>
+            {isConnected ? (
+              <p className="wallet">{shortenAddress(address!)}</p>
+            ) : (
+              <p className="wallet">Not Connected</p>
+            )}
+          </div> */}
         </div>
+        {/* ✅ RainbowKit Wallet Button */}
         <ConnectButton showBalance={false} />
         <FaBell className="icon bell" />
       </header>
@@ -123,34 +101,12 @@ const Dashboard: React.FC = () => {
       {/* Banner Carousel */}
       <div className="banner-carousel">
         <div className="banner-track" ref={trackRef}>
-          {[
-            {
-              title: "Carl Wants to sell 0.5 BTC",
-              subtitle: "In Naira → ₦4,500.00",
-              bg: btcBg,
-            },
-            {
-              title: "Carl Wants to sell 0.5 BTC",
-              subtitle: "In Naira → ₦4,500.00",
-              bg: btcBg,
-            },
-            {
-              title: "Carl Wants to sell 0.5 BTC",
-              subtitle: "In Naira → ₦4,500.00",
-              bg: btcBg,
-            },
-            {
-              title: "Carl Wants to sell 0.5 BTC",
-              subtitle: "In Naira → ₦4,500.00",
-              bg: btcBg,
-            },
-          ].map((ad, idx) => (
+          {ads.map((ad, idx) => (
             <div
               className="banner"
               key={idx}
-              // style={{ backgroundImage: `url(${ad.bg})` }}
+              style={{ backgroundImage: `url(${ad.bg})` }}
             >
-              <img src={ad.bg} alt="background" className="bgImg" />
               <div className="contentFlex">
                 <div className="content1">
                   <p>
@@ -169,10 +125,10 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="carousel-controls">
           <button className="arrow-btn" onClick={scrollPrev}>
-            <FaChevronLeft className="btnCOnt" />
+            <FaChevronLeft  className="btnCOnt"/>
           </button>
           <button className="arrow-btn" onClick={scrollNext}>
-            <FaChevronRight className="btnCOnt" />
+            <FaChevronRight className="btnCOnt"/>
           </button>
         </div>
       </div>
@@ -181,48 +137,73 @@ const Dashboard: React.FC = () => {
       <section className="transactions">
         <h4>Recent Transactions</h4>
         <div className="transaction-list">
-          {loading ? (
-            <p>Loading transactions...</p>
-          ) : transactions.length === 0 ? (
-            <EmptyState message="No transactions yet" />
-          ) : (
-            transactions.map((tx: Transaction, idx) => (
-              <div className="transaction-item" key={idx}>
-                <span className="tx-icon">
-                  <img src={tx.asset === "BTC" ? BTC : ETH} alt={tx.asset} />
-                </span>
-                <div className="tx-details">
-                  <p className="tx-type">
-                    {tx.transactionDescription || tx.type}
-                  </p>
-                  <p className="tx-date">
-                    {new Date(tx.date).toLocaleString()}
-                  </p>
-                </div>
-                <div
-                  className={`tx-amount ${
-                    tx.type === "adCancellation" ? "positive" : "negative"
-                  }`}
-                >
-                  <p>
-                    {tx.type === "credit" ? "+" : "-"} {tx.amount} {tx.asset}
-                  </p>
-                  {tx.valueInNaira && (
-                    <span>₦{tx.valueInNaira.toLocaleString()}</span>
-                  )}
-                </div>
+          {[
+            {
+              type: "Swap ETH/BTC #005",
+              amount: "+0.832993 BTC",
+              value: "$500.00",
+              status: "positive",
+              icon: ETC,
+              date: "Jan 23, 2023, 3:30pm",
+            },
+            {
+              type: "Send to #005",
+              amount: "-0.2099 ETH",
+              value: "$50.00",
+              status: "negative",
+              icon: BtC,
+              date: "Jan 23, 2023, 5:30pm",
+            },
+            {
+              type: "Send to #005",
+              amount: "-0.2099 ETH",
+              value: "$50.00",
+              status: "negative",
+              icon: BtC,
+              date: "Jan 23, 2023, 5:30pm",
+            },
+            {
+              type: "Swap ETH/BTC #005",
+              amount: "+0.832993 BTC",
+              value: "$500.00",
+              status: "positive",
+              icon: ETC,
+              date: "Jan 23, 2023, 3:30pm",
+            },
+            {
+              type: "Swap ETH/BTC #005",
+              amount: "+0.832993 BTC",
+              value: "$500.00",
+              status: "positive",
+              icon: ETC,
+              date: "Jan 23, 2023, 3:30pm",
+            },
+            {
+              type: "Swap ETH/BTC #005",
+              amount: "+0.832993 BTC",
+              value: "$500.00",
+              status: "positive",
+              icon: ETC,
+              date: "Jan 23, 2023, 3:30pm",
+            },
+          ].map((tx, idx) => (
+            <div className="transaction-item" key={idx}>
+              <span className="tx-icon"><img src={tx.icon} /></span>
+              <div className="tx-details">
+                <p className="tx-type">{tx.type}</p>
+                <p className="tx-date">{tx.date}</p>
               </div>
-            ))
-          )}
+              <div className={`tx-amount ${tx.status}`}>
+                <p>{tx.amount}</p>
+                <span>{tx.value}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Bottom Navigation */}
-      {/* <nav className={`bottom-nav ${navOpen ? "open" : ""}`}>
-        <button className="toggle-btn" onClick={() => setNavOpen(!navOpen)}>
-          {navOpen ? <FaChevronDown /> : <FaChevronUp />}
-        </button>
-
+      <nav className="bottom-nav">
         <div className="nav-item active">
           <img src={homeIcon} className="customIcon" />
           <span>Home</span>
@@ -236,11 +217,10 @@ const Dashboard: React.FC = () => {
           <span>Market</span>
         </div>
         <div className="nav-item">
-          <img src={profileIcon} className="customIcon" />
+         <img src={profileIcon} className="customIcon" />
           <span>Profile</span>
         </div>
-      </nav> */}
-      <BottomNav />
+      </nav>
     </div>
   );
 };
