@@ -79,9 +79,9 @@ const Dashboard: React.FC = () => {
 
     // ✅ Setup socket connection
     const SOCKET_URL =
-      import.meta.env.MODE === "development"
-        ? "http://localhost:5000"
-        : import.meta.env.VITE_API_BASE_URL; // 🔹 replace with your Render backend URL
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000" // 👉 local dev server
+      : import.meta.env.VITE_API_BASE_URL || "https://swap24.onrender.com"; // 👉 fallback to Render
 
     socketRef.current = io(SOCKET_URL, {
       withCredentials: true,
