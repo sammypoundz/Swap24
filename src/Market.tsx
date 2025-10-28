@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./Market.css";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
-import { createPublicClient, http } from "viem";
-import { sepolia } from "viem/chains";
 
 import backBtn from "./assets/backbtn.svg";
 import searchIcon from "./assets/searchicon.svg";
@@ -11,26 +9,42 @@ import bellIcon from "./assets/bell-02.svg";
 import avatarImg from "./assets/avatarimg.svg";
 import BottomNav from "./BottomNav";
 
-import swap24Abi from "./contracts/Swap24MarketABI.json"; // ✅ ABI file
+interface TraderStats {
+  totalOrders: number;
+  successfulOrders: number;
+  cancelledOrders: number;
+  positivityRate: number;
+  averageReleaseTime: number;
+  averagePaymentTime: number;
+  bankDetails: {
+    bankName: string;
+    accountNumber: string;
+    accountUsername: string;
+  };
+  updatedAt: string;
+}
 
-// ✅ Create a public client using your Alchemy Sepolia RPC
-const client = createPublicClient({
-  chain: sepolia,
-  transport: http("https://eth-sepolia.g.alchemy.com/v2/kXzHzmRhXZwsatZnwtLik"),
-});
-
-// ✅ Your deployed contract address
-const CONTRACT_ADDRESS = "0x4f12d6fb32891acb6221d5c0f6b90a11b6da1427";
+interface Seller {
+  username?: string;
+  bio?: string;
+  profilePicture?: string;
+  walletAddress?: string;
+  traderStats?: TraderStats | null;
+}
 
 interface Offer {
-  id: number;
-  vendor: string;
-  cryptoToken: string;
-  tokenAmount: string;
-  priceInNaira: string;
-  paymentMethod: string;
-  rate: string;
-  isActive: boolean;
+  adsId?: string;
+  title: string;
+  description: string;
+  assetType: string;
+  pricePerUnit: number;
+  availableAmount: number;
+  minLimit?: number;
+  maxLimit?: number;
+  paymentMethods: string[];
+  status: string;
+  createdAt: string;
+  seller?: Seller | null;
 }
 
 const Market: React.FC = () => {
@@ -39,43 +53,38 @@ const Market: React.FC = () => {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const { isConnected } = useAccount();
-  // const { address, isConnected } = useAccount();
   const navigate = useNavigate();
 
-  // ✅ Fetch ads directly from the blockchain
   useEffect(() => {
     const fetchOffers = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const ads = await client.readContract({
-          address: CONTRACT_ADDRESS as `0x${string}`,
-          abi: swap24Abi,
-          functionName: "getAllAds",
+        // ✅ Automatically pick backend URL
+        const backendURL =
+          import.meta.env.MODE === "development"
+            ? "http://localhost:5000"
+            : "https://swap24server.onrender.com";
+
+        // ✅ Add /api/offers/test endpoint fallback for Postman or testing
+        const res = await fetch(`${backendURL}/api/offers`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
         });
 
-        if (ads && Array.isArray(ads)) {
-          const formattedOffers: Offer[] = ads.map((ad: any) => ({
-            id: Number(ad.id),
-            vendor: ad.vendor,
-            cryptoToken: ad.cryptoToken,
-            tokenAmount: ad.tokenAmount
-              ? (Number(ad.tokenAmount) / 1e18).toFixed(4)
-              : "0.0000",
-            priceInNaira: ad.priceInNaira
-              ? `₦${Number(ad.priceInNaira).toLocaleString()}`
-              : "₦0",
-            paymentMethod: ad.paymentMethod,
-            rate: ad.rate || "-",
-            isActive: ad.isActive,
-          }));
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+        const data = await res.json();
 
-          setOffers(formattedOffers.filter((o) => o.isActive)); // ✅ Show only active ads
+        if (data.success) {
+          console.log("✅ Offers fetched:", data.offers);
+          setOffers(data.offers);
         } else {
-          setOffers([]);
+          throw new Error(data.message || "Failed to load offers");
         }
       } catch (err: any) {
         console.error("⚠️ Failed to load offers:", err);
@@ -159,47 +168,67 @@ const Market: React.FC = () => {
 
         {isLoading ? (
           <p style={{ textAlign: "center", marginTop: "20px" }}>
-            ⏳ Fetching offers from blockchain...
+            ⏳ Fetching offers...
           </p>
         ) : error ? (
-          <p style={{ color: "red", textAlign: "center" }}>
-            ⚠️ Failed to load offers: {error}
-          </p>
+          <p style={{ color: "red", textAlign: "center" }}>⚠️ {error}</p>
         ) : offers.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "20px" }}>
             No offers available
           </p>
         ) : (
           <div className="market-inner-wrap">
-            {offers.map((offer) => (
-              <div key={offer.id} className="succ-offer-card">
+            {offers.map((offer, index) => (
+              <div key={index} className="succ-offer-card">
                 <div className="succ-offer-info">
                   <div className="succ-offer-user">
                     <div className="succ-avatar">
-                      <img src={avatarImg} alt="Vendor" />
+                      <img
+                        src={offer.seller?.profilePicture || avatarImg}
+                        alt={offer.seller?.username || "Vendor"}
+                      />
                     </div>
                     <div>
                       <p className="succ-name">
-                        {offer.vendor.slice(0, 6)}...
-                        {offer.vendor.slice(-4)}
+                        {offer.seller?.username || "Unknown"}
                       </p>
-                      <span className="succ-rate">Verified</span>
+                      <span className="succ-rate">
+                        {offer.seller?.bio || "Verified Seller"}
+                      </span>
                     </div>
                   </div>
 
+                  {offer.seller?.traderStats && (
+                    <div className="succ-trader-stats">
+                      <p>
+                        <strong>{offer.seller.traderStats.totalOrders}</strong>{" "}
+                        Orders •{" "}
+                        <strong>
+                          {offer.seller.traderStats.positivityRate}%
+                        </strong>{" "}
+                        Success
+                      </p>
+                      <p>
+                        ⏱️ Avg Release:{" "}
+                        {offer.seller.traderStats.averageReleaseTime}m •
+                        Payment: {offer.seller.traderStats.averagePaymentTime}m
+                      </p>
+                    </div>
+                  )}
+
                   <div className="succ-offer-tokenAmount">
                     <h2>
-                      <span className="crypto-prefix">
-                        {offer.cryptoToken}
-                      </span>{" "}
-                      {offer.tokenAmount}
+                      <span className="crypto-prefix">{offer.assetType}</span>{" "}
+                      {offer.availableAmount}
                     </h2>
-                    <span className="succ-offer-change">0%</span>
                   </div>
 
-                  <p className="succ-offer-desc">{offer.priceInNaira}</p>
-                  <p className="succ-offer-limit">{offer.paymentMethod}</p>
-                  <p className="succ-offer-limit">{offer.rate}</p>
+                  <p className="succ-offer-desc">
+                    ₦{offer.pricePerUnit.toLocaleString()}
+                  </p>
+                  <p className="succ-offer-limit">
+                    {offer.paymentMethods.join(", ")}
+                  </p>
                 </div>
 
                 <button

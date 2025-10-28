@@ -1,25 +1,48 @@
-// src/pages/buyAsset.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./buyAsset.css";
 
 import backIcon from "./assets/Expand_down.svg";
 import swapIcon from "./assets/swap.svg";
+import avatarImg from "./assets/avatarimg.svg";
 
-interface Offer {
-  id: number;
-  name: string;
-  positiveRate: string;
-  tokenAmount: number;
-  change: string;
-  rate: string;
-  limit: string;
-  paymentMethod: string;
-  offererImg: string;
-  totalPrice: string;
+interface TraderStats {
+  totalOrders: number;
+  successfulOrders: number;
+  cancelledOrders: number;
+  positivityRate: number;
+  averageReleaseTime: number;
+  averagePaymentTime: number;
+  bankDetails: {
+    bankName: string;
+    accountNumber: string;
+    accountUsername: string;
+  };
 }
 
-// ✅ Utility to format money or token
+interface Seller {
+  username?: string;
+  bio?: string;
+  profilePicture?: string;
+  traderStats?: TraderStats | null;
+}
+
+interface Offer {
+  adsId?: string;
+  title: string;
+  description: string;
+  assetType: string;
+  pricePerUnit: number;
+  availableAmount: number;
+  minLimit?: number;
+  maxLimit?: number;
+  paymentMethods: string[];
+  status: string;
+  createdAt: string;
+  seller?: Seller | null;
+}
+
+// ✅ Utility for number formatting
 const formatAmount = (value: number, isMoney = false): string => {
   if (isNaN(value)) return "0";
   return isMoney
@@ -39,125 +62,60 @@ const BuyAsset: React.FC = () => {
 
   const state = (location.state || {}) as { offer?: Offer; asset?: string };
   const offer = state.offer;
-  const asset = state.asset || "TOKEN";
+  const assetFromState = state.asset;
+
+  // ✅ Automatically detect and update asset (BTC, ETH, etc.)
+  const asset =
+    assetFromState || offer?.assetType?.toUpperCase() || "TOKEN";
 
   useEffect(() => {
     if (!offer) navigate("/market");
   }, [offer, navigate]);
-
-  // --- Extract limits like "500 - 10000"
-  // const extractLimits = (limitStr = ""): [number, number] => {
-  //   const match = limitStr.match(/([\d.]+)\s*-\s*([\d.]+)/);
-  //   return match ? [parseFloat(match[1]), parseFloat(match[2])] : [0, 0];
-  // };
-  // const [minLimit, maxLimit] = extractLimits(offer?.limit);
-
-  // ✅ Extract rate (supports both directions)
-  const extractRate = (rateStr = ""): number => {
-    if (!rateStr) return 0;
-
-    // Case 1: "1 NGN = 0.00001 of BTC"
-    const ngnToToken = rateStr.match(/1\s*NGN\s*=\s*([\d.]+)\s*(of)?\s*\w+/i);
-    if (ngnToToken) {
-      const tokenPerNaira = parseFloat(ngnToToken[1]);
-      if (tokenPerNaira > 0) {
-        const ngnPerToken = 1 / tokenPerNaira;
-        console.log("💱 Rate parsed:", rateStr);
-        console.log(`👉 1 Token = ${ngnPerToken} NGN`);
-        return ngnPerToken;
-      }
-    }
-
-    // Case 2: "1 BTC = 45000000 NGN"
-    const tokenToNgn = rateStr.match(/1\s*\w+\s*=\s*([\d.]+)\s*NGN/i);
-    if (tokenToNgn) {
-      const ngnValue = parseFloat(tokenToNgn[1]);
-      console.log("💱 Rate parsed:", rateStr);
-      console.log(`👉 1 Token = ${ngnValue} NGN`);
-      return ngnValue;
-    }
-
-    console.warn("⚠️ Could not parse rate:", rateStr);
-    return 0;
-  };
-
-  const nairaPerToken = extractRate(offer?.rate || "");
-
-  console.log("🔍 Parsed rate from backend:", offer?.rate);
-  console.log("💰 Computed NGN per token:", nairaPerToken);
 
   // --- States ---
   const [tokenInput, setTokenInput] = useState<string>("");
   const [nairaAmount, setNairaAmount] = useState<number>(0);
   const [error, setError] = useState<string>("");
 
-  // ✅ Compute conversion on input
+  // ✅ Compute conversion (Token → NGN)
   useEffect(() => {
-    console.group("💡 Conversion Debug");
-    console.log("🔢 Token input:", tokenInput);
-    console.log("💹 NGN per Token:", nairaPerToken);
-
-    if (!offer) {
-      console.warn("⚠️ No offer found — exiting");
-      console.groupEnd();
-      return;
-    }
+    if (!offer || !offer.pricePerUnit) return;
 
     if (tokenInput === "") {
       setNairaAmount(0);
-      setError("");
-      console.groupEnd();
       return;
     }
 
-    const tokenAmount = Number(tokenInput);
-    if (isNaN(tokenAmount)) {
-      setError("Invalid number");
-      setNairaAmount(0);
-      console.groupEnd();
+    const tokenValue = parseFloat(tokenInput);
+    if (isNaN(tokenValue)) {
+      setError("Invalid token value");
       return;
     }
 
-    if (nairaPerToken <= 0) {
-      setError("Unable to compute conversion — invalid rate");
-      setNairaAmount(0);
-      console.groupEnd();
-      return;
-    }
-
-    // ✅ Convert Token → NGN
-    const converted = tokenAmount * nairaPerToken;
-    setNairaAmount(converted);
+    const ngnValue = tokenValue * offer.pricePerUnit;
+    setNairaAmount(ngnValue);
     setError("");
-
-    // ✅ Log the result in console
-    console.log(`🧮 ${tokenAmount} ${asset} × ${nairaPerToken} = ${converted} NGN`);
-    console.log("✅ Naira amount:", converted);
-    console.groupEnd();
-  }, [tokenInput, nairaPerToken, offer, asset]);
+  }, [tokenInput, offer]);
 
   const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    if (/^\d*\.?\d*$/.test(input)) {
-      setTokenInput(input);
-    }
+    if (/^\d*\.?\d*$/.test(input)) setTokenInput(input);
   };
 
   const handleBack = () => navigate("/market");
 
-  const handleBuy = () => {
+  const handleBuy = async () => {
     if (!offer) return;
-    if (!tokenInput || Number(tokenInput) === 0) {
-      setError("Enter token amount to proceed");
+    if (!tokenInput || Number(tokenInput) <= 0) {
+      setError("Enter a valid token amount");
       return;
     }
-    if (error) return;
 
-    console.log("🟢 Buy Request:", {
-      offerId: offer.id,
-      tokenAmount: tokenInput,
-      nairaAmount,
-    });
+    alert(
+      `Buying ${tokenInput} ${asset} for ₦${nairaAmount.toLocaleString()} from ${
+        offer.seller?.username || "Vendor"
+      }`
+    );
   };
 
   if (!offer) return null;
@@ -177,22 +135,28 @@ const BuyAsset: React.FC = () => {
         <div className="succ-asset-seller">
           <div className="succ-asset-seller-info">
             <img
-              src={offer.offererImg}
-              alt={offer.name}
+              src={offer.seller?.profilePicture || avatarImg}
+              alt={offer.seller?.username || "Seller"}
               className="succ-asset-avatar"
             />
             <div>
-              <h3>{offer.name}</h3>
-              <p>
-                <span>{offer.positiveRate}</span>
-              </p>
+              <h3>{offer.seller?.username || "Vendor"}</h3>
+              <p>{offer.seller?.bio || "Verified Seller"}</p>
+              {offer.seller?.traderStats && (
+                <p>
+                  {offer.seller.traderStats.positivityRate}% Success •{" "}
+                  {offer.seller.traderStats.totalOrders} Orders
+                </p>
+              )}
             </div>
           </div>
 
           <div className="succ-seller-time">
             <p>
-              <strong>3.85 Minute</strong>
-              <span>Avg. Release Time</span>
+              <strong>
+                {offer.seller?.traderStats?.averageReleaseTime || "3.8"} mins
+              </strong>
+              <span>Avg Release</span>
             </p>
           </div>
         </div>
@@ -200,23 +164,31 @@ const BuyAsset: React.FC = () => {
         {/* Price Info */}
         <div className="succ-asset-price">
           <div>
-            <h4>{offer.totalPrice}</h4>
-            <h3>{offer.rate}</h3>
+            <h4>{formatAmount(offer.pricePerUnit, true)}</h4>
             <p>
               Available:{" "}
               <span className="spa">
-                {formatAmount(offer.tokenAmount)} {asset}
+                {formatAmount(offer.availableAmount)} {asset}
+              </span>
+            </p>
+            <p>
+              Limit:{" "}
+              <span className="spa">
+                ₦{offer.minLimit?.toLocaleString() || 0} - ₦
+                {offer.maxLimit?.toLocaleString() || 0}
               </span>
             </p>
           </div>
 
           <div className="price-dflex">
-            <strong>15 Minute</strong>
+            <strong>
+              {offer.seller?.traderStats?.averagePaymentTime || "15"} mins
+            </strong>
             <span>Payment Time</span>
           </div>
         </div>
 
-        {/* Conversion Section */}
+        {/* Conversion Box */}
         <div className="succ-convert-box">
           {/* NGN Pay */}
           <div className="succ-convert-row">
@@ -265,7 +237,8 @@ const BuyAsset: React.FC = () => {
         {/* Payment method */}
         <div className="succ-payment-method">
           <p>
-            Payment method: <strong>{offer.paymentMethod}</strong>
+            Payment method:{" "}
+            <strong>{offer.paymentMethods.join(", ")}</strong>
           </p>
         </div>
 

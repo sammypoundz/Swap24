@@ -14,6 +14,7 @@ import ERC20_ABI from "./abi/ERC20.json";
 import MARKET_ABI from "./contracts/Swap24MarketABI.json";
 import TokenSelectModal from "./TokenSelectModal";
 import { addUserTransaction } from "./api"; // ✅ backend integration
+import { decodeEventLog } from "viem";
 
 // ✅ Replace after redeploy
 const MARKETPLACE_CONTRACT = "0x4f12d6fb32891acb6221d5c0f6b90a11b6da1427";
@@ -98,7 +99,7 @@ const PlaceAds: React.FC = () => {
     }
   };
 
-  // ✅ Create Ad
+  // ✅ Create Ad and record it both on blockchain and backend
   const handlePostAd = async () => {
     if (!walletClient || !client)
       return alert("⚠️ Please connect your wallet first.");
@@ -141,6 +142,7 @@ const PlaceAds: React.FC = () => {
         computedRate,
       ];
 
+      // ✅ Step 1: Send ad to blockchain
       const txHash = await walletClient.writeContract({
         address: MARKETPLACE_CONTRACT,
         abi: MARKET_ABI,
@@ -149,7 +151,9 @@ const PlaceAds: React.FC = () => {
         ...(isETH ? { value: tokenAmount } : {}),
       });
 
+      // ✅ Step 2: Wait for transaction confirmation
       const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+
       if (receipt.status === "success") {
         alert(`🎉 Ad created successfully!\nTx: ${txHash}`);
 
@@ -162,6 +166,38 @@ const PlaceAds: React.FC = () => {
           return;
         }
 
+        // ✅ Step 3: Extract adsId (adId) from contract event safely
+        let adsId: string | null = null;
+        try {
+          const logEvent = receipt.logs.find(
+            (log: any) =>
+              log.address.toLowerCase() === MARKETPLACE_CONTRACT.toLowerCase()
+          );
+
+          if (logEvent) {
+            const decoded = decodeEventLog({
+              abi: MARKET_ABI,
+              data: logEvent.data,
+              topics: logEvent.topics,
+            });
+
+            // viem sometimes returns .args as array or object depending on ABI
+            if (Array.isArray(decoded?.args)) {
+              adsId = decoded.args[0]?.toString() || null;
+            } else if (decoded?.args && typeof decoded.args === "object") {
+              adsId =
+                (decoded.args as any)?.adId?.toString() ||
+                (decoded.args as any)?.id?.toString() ||
+                null;
+            }
+          }
+        } catch (err) {
+          console.warn("⚠️ Could not decode adsId:", err);
+        }
+
+        console.log("🆔 Extracted adsId:", adsId);
+
+        // ✅ Step 4: Log transaction
         await addUserTransaction({
           userId,
           type: "adPlacement",
@@ -173,7 +209,41 @@ const PlaceAds: React.FC = () => {
           transactionDescription: `Placed a ${tab} ad for ${amount} ${selectedToken.symbol} at ₦${price} via ${paymentMethod}`,
         });
 
-        console.log("✅ Transaction logged as adPlacement");
+        // ✅ Step 5: Record ad with adsId in backend
+        const backendURL =
+          import.meta.env.MODE === "development"
+            ? "http://localhost:5000"
+            : "https://swap24server.onrender.com";
+
+        const offerData = {
+          userId,
+          adsId, // ✅ include blockchain ad ID
+          title: `${tab === "buy" ? "Buy" : "Sell"} ${selectedToken.symbol}`,
+          description: `User posted ${tab} ad on blockchain`,
+          assetType: selectedToken.symbol,
+          pricePerUnit: parseFloat(price),
+          availableAmount: parseFloat(amount),
+          minLimit: 0,
+          maxLimit: parseFloat(amount),
+          paymentMethods: [paymentMethod],
+          txHash,
+        };
+
+        const res = await fetch(
+          `${backendURL}/api/transactions/recordAdAfterContract`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(offerData),
+          }
+        );
+
+        const data = await res.json();
+        if (data.success) {
+          console.log("✅ Ad recorded in backend:", data.offer);
+        } else {
+          console.warn("⚠️ Failed to record ad in backend:", data.message);
+        }
       } else {
         alert("⚠️ Transaction failed on-chain.");
       }
@@ -315,10 +385,7 @@ const PlaceAds: React.FC = () => {
   return (
     <div className="succ-placeads">
       <div className="succ-placeads-header">
-        <button
-          className="succ-back-btn"
-          onClick={() => navigate("/my-ads")}
-        >
+        <button className="succ-back-btn" onClick={() => navigate("/my-ads")}>
           <ArrowLeft size={20} />
         </button>
         <h2>Place an Ad</h2>
